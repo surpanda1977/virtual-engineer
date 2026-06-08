@@ -24,14 +24,20 @@
         <div class="bubble">
           <p>👋 Hi! I'm your Virtual Engineer. Ask me to <strong>review</strong>,
           <strong>explain</strong>, <strong>debug</strong>, or <strong>generate</strong> code.</p>
+          <p>📎 Or <strong>attach documents</strong> (PDF, Word, Excel, PowerPoint, CSV, images)
+          and I'll analyze them for <strong>issues, requests, and trends</strong>.</p>
         </div>
       </div>
     </main>
 
     <div class="suggestions" id="suggestions"></div>
+    <div class="attachments" id="attachments"></div>
 
     <form class="composer" id="composer">
-      <textarea id="input" rows="1" placeholder="Ask the Virtual Engineer… (Shift+Enter for newline)"></textarea>
+      <input type="file" id="file-input" multiple hidden
+             accept=".pdf,.docx,.xlsx,.pptx,.csv,.tsv,.txt,.md,.json,.log,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tif,.tiff" />
+      <button type="button" id="attach" class="icon-btn" title="Attach documents to analyze">📎</button>
+      <textarea id="input" rows="1" placeholder="Ask a question, or attach files to analyze… (Shift+Enter for newline)"></textarea>
       <button type="submit" id="send">Send</button>
     </form>
 

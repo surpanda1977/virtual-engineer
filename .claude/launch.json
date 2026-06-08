@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "virtual-engineer",
+      "runtimeExecutable": "C:\\Users\\surpanda\\tools\\python312\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8013"],
+      "port": 8013
+    }
+  ]
+}

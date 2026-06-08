@@ -13,14 +13,19 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from app import __version__
+from app.analysis import analyze_documents
 from app.engineer import generate_reply
+from app.ingest import extract
+
+# Reject individual uploads larger than this (bytes) to stay safe.
+MAX_FILE_BYTES = 25 * 1024 * 1024  # 25 MB
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -65,3 +70,28 @@ def chat(req: ChatRequest) -> ChatResponse:
     history = [m.model_dump() for m in req.history]
     reply = generate_reply(req.message, history)
     return ChatResponse(intent=reply.intent, reply=reply.text, suggestions=reply.suggestions)
+
+
+@app.post("/api/analyze")
+async def analyze(files: list[UploadFile]) -> dict:
+    """
+    Ingest one or more uploaded files and return structured insights:
+    detected issues & requests, categories, top themes, and time-trends.
+    """
+    docs = []
+    skipped = []
+    for f in files:
+        data = await f.read()
+        if len(data) > MAX_FILE_BYTES:
+            skipped.append({"filename": f.filename, "reason": "file too large"})
+            continue
+        docs.append(extract(f.filename or "unnamed", data))
+
+    if not docs:
+        return {"ok": False, "skipped": skipped, "error": "No readable files were uploaded."}
+
+    result = analyze_documents(docs)
+    payload = result.to_dict()
+    payload["ok"] = True
+    payload["skipped"] = skipped
+    return payload

@@ -27,10 +27,19 @@ C:\Users\surpanda\tools\python312\python.exe -m unittest discover -s tests -t .
 ```
 
 ## Layout
-- `app/main.py` — FastAPI app, routes (`/`, `/api/health`, `/api/chat`).
-- `app/engineer.py` — the "brain". `generate_reply()` is the swap point for a real LLM.
-- `app/templates/`, `app/static/` — the chat UI.
-- `tests/` — unittest suite.
+- `app/main.py` — FastAPI app, routes (`/`, `/api/health`, `/api/chat`, `/api/analyze`).
+- `app/engineer.py` — the chat "brain". `generate_reply()` is the swap point for a real LLM.
+- `app/ingest.py` — extracts text/tables/metadata from PDF, Word, Excel, PowerPoint, CSV, text, images.
+- `app/analysis.py` — heuristic issue/request + trend engine. `analyze_documents()` is the swap point
+  for a real LLM (`analyze_with_claude()` is the ready example, incl. image/vision).
+- `app/templates/`, `app/static/` — the chat UI (chat + attach-files document analysis).
+- `tests/` — unittest suite (`test_engineer.py`, `test_analysis.py`).
+
+## Document analysis feature
+- Attach files in the UI (📎) → POST multipart to `/api/analyze` → renders an insights report
+  (issues/requests by category, top themes, month-by-month trend chart).
+- Offline/heuristic today. Images: only metadata is read offline; real vision needs the Claude API.
+- To get real insights: flip `analyze_documents()` to `analyze_with_claude()` (mirrors the engineer swap).
 
 ## Switching to the real Claude API
 1. Uncomment `anthropic` in `requirements.txt`, then `pip install -r requirements.txt`.
