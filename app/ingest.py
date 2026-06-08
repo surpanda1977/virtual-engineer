@@ -36,6 +36,10 @@ class ExtractedDoc:
     tables: list[list[list[str]]] = field(default_factory=list)  # tables -> rows -> cells
     metadata: dict = field(default_factory=dict)
     error: str | None = None
+    # For images only: base64 data + media type, so the analysis layer can send
+    # them to the Claude vision API. Empty for non-image files.
+    image_b64: str | None = None
+    media_type: str | None = None
 
     @property
     def word_count(self) -> int:
@@ -189,15 +193,35 @@ def _extract_text(filename: str, data: bytes, filetype: str) -> ExtractedDoc:
     )
 
 
+_PIL_TO_MEDIA_TYPE = {
+    "JPEG": "image/jpeg",
+    "PNG": "image/png",
+    "GIF": "image/gif",
+    "WEBP": "image/webp",
+}
+
+
 def _extract_image(filename: str, data: bytes) -> ExtractedDoc:
+    import base64
+
     from PIL import Image
 
     with Image.open(io.BytesIO(data)) as img:
         meta = {"format": img.format, "mode": img.mode, "width": img.width, "height": img.height}
-    # Offline mode can read pixels/metadata but not *understand* the image.
-    # Real content analysis happens via the Claude vision API (see analysis.py).
+        fmt = (img.format or "").upper()
+
     note = (
         f"[Image: {meta['width']}x{meta['height']} {meta.get('format')}. "
         "Visual content analysis requires the Claude vision API (offline mock mode reads metadata only).]"
     )
-    return ExtractedDoc(filename=filename, filetype="image", text=note, metadata=meta)
+    # Carry the raw bytes (base64) so the analysis layer can pass it to Claude's
+    # vision API. Claude supports JPEG/PNG/GIF/WEBP; skip others (e.g. TIFF/BMP).
+    media_type = _PIL_TO_MEDIA_TYPE.get(fmt)
+    return ExtractedDoc(
+        filename=filename,
+        filetype="image",
+        text=note,
+        metadata=meta,
+        image_b64=base64.standard_b64encode(data).decode("ascii") if media_type else None,
+        media_type=media_type,
+    )

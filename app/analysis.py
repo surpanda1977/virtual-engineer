@@ -162,10 +162,23 @@ def analyze_documents(docs: list[ExtractedDoc]) -> AnalysisResult:
     """
     Analyse a batch of ingested documents and return structured insights.
 
-    To use the real Claude API instead, replace the body with:
-        return analyze_with_claude(docs)
+    The heuristic engine always runs to produce the quantitative scaffold
+    (issue/request categories, top themes, time-trends -> charts). When an
+    ANTHROPIC_API_KEY is configured, Claude additionally writes a genuine,
+    context-aware executive summary and *reads any images* (vision). If the
+    Claude call fails, we keep the heuristic result and note the error.
     """
-    return _heuristic_analysis(docs)
+    from app import config
+
+    result = _heuristic_analysis(docs)
+    if not config.use_real_llm():
+        return result
+    try:
+        return _enrich_with_claude(docs, result)
+    except Exception as exc:  # noqa: BLE001 - degrade gracefully
+        result.notes.insert(0, f"⚠️ Claude enrichment failed ({type(exc).__name__}); "
+                                "showing heuristic analysis only.")
+        return result
 
 
 def _heuristic_analysis(docs: list[ExtractedDoc]) -> AnalysisResult:
@@ -260,36 +273,56 @@ def _build_notes(r: AnalysisResult, has_image: bool, dated_findings: int) -> lis
     return notes
 
 
-# --- Real Claude API example (disabled until you opt in) --------------------
+# --- Real Claude API (used automatically when a key is configured) ----------
 
-def analyze_with_claude(docs: list[ExtractedDoc]) -> AnalysisResult:
-    """
-    Drop-in replacement that sends the ingested content to Claude for genuine
-    analysis. Images can be passed as image blocks for true vision analysis.
+_ANALYSIS_SYSTEM = (
+    "You are the Virtual Engineer's senior analyst. You are given a batch of documents "
+    "(and possibly images). Produce a concise, insightful executive summary focused on: "
+    "(1) the key ISSUES/problems, (2) the key REQUESTS/asks, and (3) notable TRENDS or "
+    "patterns over time. Be specific and cite the source filename for each insight. "
+    "Read any images directly and fold what you see into the analysis. "
+    "Format with short paragraphs and **bold** labels — do NOT use markdown headings "
+    "(no '#'); they won't render. Keep it under ~350 words."
+)
 
-    To enable:
-      1. Uncomment `anthropic` in requirements.txt and install it.
-      2. Set ANTHROPIC_API_KEY (see .env.example).
-      3. In analyze_documents() above, return analyze_with_claude(docs).
 
-    The heuristic result below is computed first so the structured fields
-    (categories, trends) stay populated; you can then have Claude enrich the
-    `summary` and `notes`, or replace the parsing entirely with the model.
-    """
-    import os
+def _enrich_with_claude(docs: list[ExtractedDoc], base: AnalysisResult) -> AnalysisResult:
+    """Send ingested content (text + images) to Claude for a real executive summary."""
+    from anthropic import Anthropic
 
-    from anthropic import Anthropic  # type: ignore  # lazy import on purpose
+    from app import config
 
-    base = _heuristic_analysis(docs)
-    corpus = "\n\n".join(f"### {d.filename}\n{d.text[:8000]}" for d in docs if not d.error)
-    client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    content: list[dict] = [{
+        "type": "text",
+        "text": "Analyse the following documents and images. Here is a heuristic first pass "
+                f"for reference — issues found: {len(base.issues)}, requests: {len(base.requests)}, "
+                f"top issue themes: {list(base.issue_categories)[:3]}.",
+    }]
+    for d in docs:
+        if d.error:
+            continue
+        if d.filetype == "image" and d.image_b64 and d.media_type:
+            content.append({"type": "text", "text": f"\n--- Image: {d.filename} ---"})
+            content.append({
+                "type": "image",
+                "source": {"type": "base64", "media_type": d.media_type, "data": d.image_b64},
+            })
+        elif d.text.strip():
+            content.append({"type": "text", "text": f"\n--- {d.filename} ({d.filetype}) ---\n{d.text[:12000]}"})
+
+    client = Anthropic()  # reads ANTHROPIC_API_KEY from the environment
     response = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=1500,
-        system=("You are a senior analyst. Read the provided documents and produce a concise, "
-                "executive summary of the key issues and requests, plus notable trends. "
-                "Be specific and cite which file each insight came from."),
-        messages=[{"role": "user", "content": f"Analyse these documents:\n\n{corpus}"}],
+        model=config.ANALYSIS_MODEL,
+        max_tokens=config.ANALYSIS_MAX_TOKENS,
+        thinking={"type": "adaptive"},
+        system=_ANALYSIS_SYSTEM,
+        messages=[{"role": "user", "content": content}],
     )
-    base.summary = "".join(b.text for b in response.content if b.type == "text")
+    summary = "".join(b.text for b in response.content if b.type == "text").strip()
+    if summary:
+        base.summary = summary
+        base.notes = ["✨ Summary generated by Claude (claude-opus-4-8), including direct "
+                      "image analysis where applicable. Category counts and the trend chart "
+                      "below are computed from the documents."]
     return base
+

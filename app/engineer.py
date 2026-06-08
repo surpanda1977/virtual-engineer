@@ -174,41 +174,52 @@ def generate_reply(message: str, history: list[dict] | None = None) -> Reply:
     Produce the Virtual Engineer's reply to a user message.
 
     `history` is a list of {"role": "user"|"assistant", "content": str} dicts.
-    The mock ignores history, but a real LLM would use it for context.
 
-    To use the real Claude API instead, replace the line below with:
-        return generate_reply_with_claude(message, history)
+    Uses the real Claude API when an ANTHROPIC_API_KEY is configured (see
+    app/config.py); otherwise falls back to the offline mock. If a Claude call
+    fails (bad key, no network), we degrade gracefully to the mock so the app
+    never hard-fails.
     """
+    from app import config
+
+    if config.use_real_llm():
+        try:
+            return generate_reply_with_claude(message, history)
+        except Exception as exc:  # noqa: BLE001 - degrade gracefully
+            fallback = _mock_reply(message)
+            fallback.text = (
+                f"⚠️ Couldn't reach Claude ({type(exc).__name__}); showing an offline "
+                f"answer instead.\n\n{fallback.text}"
+            )
+            return fallback
     return _mock_reply(message)
 
 
-# --- Real Claude API example (disabled until you opt in) --------------------
+# --- Real Claude API --------------------------------------------------------
+
+_SYSTEM_PROMPT = (
+    "You are the Virtual Engineer, a senior software engineer acting as a helpful "
+    "pair-programming assistant. Be concise, correct, and practical. Prefer concrete "
+    "code examples in fenced code blocks. When reviewing or debugging, give specific, "
+    "actionable feedback."
+)
+
 
 def generate_reply_with_claude(message: str, history: list[dict] | None = None) -> Reply:
-    """
-    Drop-in replacement that calls the real Claude API.
+    """Call the real Claude API. Credentials resolve from ANTHROPIC_API_KEY."""
+    from anthropic import Anthropic  # imported lazily so the mock needs no SDK
 
-    To enable:
-      1. Uncomment `anthropic` in requirements.txt and run the pip install.
-      2. Set the ANTHROPIC_API_KEY environment variable (see .env.example).
-      3. In generate_reply() above, return this function instead of _mock_reply().
-    """
-    import os
+    from app import config
 
-    from anthropic import Anthropic  # type: ignore  # imported lazily on purpose
-
-    client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    messages = list(history or [])
+    client = Anthropic()  # reads ANTHROPIC_API_KEY from the environment
+    messages = [{"role": m["role"], "content": m["content"]} for m in (history or [])]
     messages.append({"role": "user", "content": message})
 
     response = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=1024,
-        system=(
-            "You are a senior software engineer acting as a helpful pair-programming "
-            "assistant. Be concise, correct, and practical. Prefer code examples."
-        ),
+        model=config.CHAT_MODEL,
+        max_tokens=config.CHAT_MAX_TOKENS,
+        system=_SYSTEM_PROMPT,
         messages=messages,
     )
     text = "".join(block.text for block in response.content if block.type == "text")
-    return Reply(intent=classify(message), text=text)
+    return Reply(intent=classify(message), text=text or "(no response)")

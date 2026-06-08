@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from app import __version__
+from app import __version__, config
 from app.analysis import analyze_documents
 from app.engineer import generate_reply
 from app.ingest import extract
@@ -54,14 +54,14 @@ class ChatResponse(BaseModel):
 def index(request: Request) -> HTMLResponse:
     """Serve the chat UI."""
     return templates.TemplateResponse(
-        request, "index.html", {"version": __version__}
+        request, "index.html", {"version": __version__, "mode": config.mode()}
     )
 
 
 @app.get("/api/health")
 def health() -> dict:
     """Simple liveness/version probe."""
-    return {"status": "ok", "version": __version__, "mode": "mock"}
+    return {"status": "ok", "version": __version__, "mode": config.mode()}
 
 
 @app.post("/api/chat", response_model=ChatResponse)

@@ -41,10 +41,15 @@ C:\Users\surpanda\tools\python312\python.exe -m unittest discover -s tests -t .
 - Offline/heuristic today. Images: only metadata is read offline; real vision needs the Claude API.
 - To get real insights: flip `analyze_documents()` to `analyze_with_claude()` (mirrors the engineer swap).
 
-## Switching to the real Claude API
-1. Uncomment `anthropic` in `requirements.txt`, then `pip install -r requirements.txt`.
-2. Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`.
-3. In `app/engineer.py`, change `generate_reply()` to call `generate_reply_with_claude()`.
+## Real Claude API vs offline mock (automatic)
+- `app/config.py` is the single source of truth: if `ANTHROPIC_API_KEY` (starts with
+  `sk-ant-`) is set, the app uses the real Claude API (`claude-opus-4-8`); otherwise the
+  offline mock. Both chat (`engineer.py`) and analysis (`analysis.py`) follow this and
+  **fall back to mock/heuristic if a Claude call fails**, so the app never hard-fails.
+- Analysis: the heuristic always computes the category counts + trend chart; Claude adds a
+  real executive summary and reads images directly (vision).
+- To enable: `pip install -r requirements.txt`, copy `.env.example` to `.env`, set
+  `ANTHROPIC_API_KEY`. The mode badge in the UI shows "🟢 Claude API" vs "offline mock".
 
 ## Git / Gitea
 - Local Gitea server: http://localhost:3000  (user: `surpanda`)
