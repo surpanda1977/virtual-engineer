@@ -49,7 +49,7 @@ class ChatResponse(BaseModel):
 def index(request: Request) -> HTMLResponse:
     """Serve the chat UI."""
     return templates.TemplateResponse(
-        "index.html", {"request": request, "version": __version__}
+        request, "index.html", {"version": __version__}
     )
 
 
