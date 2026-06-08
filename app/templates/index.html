@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Engineer</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <span class="logo">⚙️</span>
+        <div>
+          <h1>Virtual Engineer</h1>
+          <p class="tagline">Your AI pair-programming assistant</p>
+        </div>
+      </div>
+      <span class="badge" id="mode-badge">mock mode</span>
+    </header>
+
+    <main class="chat" id="chat">
+      <div class="msg assistant">
+        <div class="bubble">
+          <p>👋 Hi! I'm your Virtual Engineer. Ask me to <strong>review</strong>,
+          <strong>explain</strong>, <strong>debug</strong>, or <strong>generate</strong> code.</p>
+        </div>
+      </div>
+    </main>
+
+    <div class="suggestions" id="suggestions"></div>
+
+    <form class="composer" id="composer">
+      <textarea id="input" rows="1" placeholder="Ask the Virtual Engineer… (Shift+Enter for newline)"></textarea>
+      <button type="submit" id="send">Send</button>
+    </form>
+
+    <footer class="footer">v{{ version }} · running locally · powered by FastAPI</footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
