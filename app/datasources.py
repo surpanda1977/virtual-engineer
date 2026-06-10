@@ -85,53 +85,47 @@ def _needs_rebuild() -> bool:
     return False
 
 
-def _load_table(conn: sqlite3.Connection, token: str, table: str) -> int:
-    path = _find_csv(token)
-    if not path:
+def _load_table(conn: sqlite3.Connection, table: str, header, rows, date_map: dict) -> int:
+    """Load a dataset (columns + row iterator from a connector) into `table`."""
+    header = list(header or [])
+    if not header:
         return 0
-    with open(path, "r", encoding="utf-8-sig", errors="replace", newline="") as f:
-        reader = csv.reader(f)
-        header = next(reader, None)
-        if not header:
-            return 0
-        cols = [_sanitize(h) for h in header]
-        # De-duplicate any colliding sanitized names.
-        seen: dict[str, int] = {}
-        for i, c in enumerate(cols):
-            if c in seen:
-                seen[c] += 1
-                cols[i] = f"{c}_{seen[c]}"
-            else:
-                seen[c] = 0
+    cols = [_sanitize(h) for h in header]
+    # De-duplicate any colliding sanitized names.
+    seen: dict[str, int] = {}
+    for i, c in enumerate(cols):
+        if c in seen:
+            seen[c] += 1
+            cols[i] = f"{c}_{seen[c]}"
+        else:
+            seen[c] = 0
 
-        date_map = DATE_COLUMNS.get(table, {})
-        extra_cols = list(date_map.values())
-        all_cols = cols + extra_cols
+    extra_cols = list(date_map.values())
+    all_cols = cols + extra_cols
 
-        conn.execute(f"DROP TABLE IF EXISTS {table}")
-        col_defs = ", ".join(f'"{c}" TEXT' for c in all_cols)
-        conn.execute(f"CREATE TABLE {table} ({col_defs})")
+    conn.execute(f"DROP TABLE IF EXISTS {table}")
+    col_defs = ", ".join(f'"{c}" TEXT' for c in all_cols)
+    conn.execute(f"CREATE TABLE {table} ({col_defs})")
 
-        placeholders = ", ".join("?" for _ in all_cols)
-        insert_sql = f"INSERT INTO {table} VALUES ({placeholders})"
-        col_index = {c: i for i, c in enumerate(cols)}
+    placeholders = ", ".join("?" for _ in all_cols)
+    insert_sql = f"INSERT INTO {table} VALUES ({placeholders})"
+    col_index = {c: i for i, c in enumerate(cols)}
 
-        batch, total = [], 0
-        for row in reader:
-            row = (row + [""] * len(cols))[: len(cols)]  # pad/trim to width
-            extras = []
-            for raw_col, iso_col in date_map.items():
-                sc = _sanitize(raw_col)
-                idx = col_index.get(sc)
-                extras.append(_iso(row[idx]) if idx is not None else None)
-            batch.append(row + extras)
-            if len(batch) >= 5000:
-                conn.executemany(insert_sql, batch)
-                total += len(batch)
-                batch.clear()
-        if batch:
+    batch, total = [], 0
+    for row in rows:
+        row = (list(row) + [""] * len(cols))[: len(cols)]  # pad/trim to width
+        extras = []
+        for raw_col, iso_col in date_map.items():
+            idx = col_index.get(_sanitize(raw_col))
+            extras.append(_iso(row[idx]) if idx is not None else None)
+        batch.append(row + extras)
+        if len(batch) >= 5000:
             conn.executemany(insert_sql, batch)
             total += len(batch)
+            batch.clear()
+    if batch:
+        conn.executemany(insert_sql, batch)
+        total += len(batch)
     return total
 
 
@@ -168,22 +162,34 @@ def _build_fts(conn: sqlite3.Connection) -> bool:
 
 
 def build(force: bool = False) -> dict:
-    """Build the SQLite DB from the CSVs. Returns row counts per table."""
+    """Build the SQLite DB from the active connector. Returns row counts per table."""
+    from app.connectors import get_connector  # lazy import (avoids any import cycle)
+
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     if not force and not _needs_rebuild():
         return stats()
-    counts = {}
+    connector = get_connector()
+    counts: dict = {}
     conn = sqlite3.connect(DB_PATH)
     try:
         conn.execute("PRAGMA journal_mode=WAL")
-        for token, table in SOURCES.items():
-            counts[table] = _load_table(conn, token, table)
+        for table in SOURCES.values():  # incidents, problems, changes, tasks
+            header, rows = connector.fetch(table)
+            counts[table] = _load_table(conn, table, header, rows, DATE_COLUMNS.get(table, {}))
         _create_indexes(conn)
         counts["fts"] = _build_fts(conn)
+        counts["source"] = connector.source_name
         conn.commit()
     finally:
         conn.close()
     return counts
+
+
+def data_source() -> dict:
+    """Active data source description (for /api/itsm/source and stats)."""
+    from app.connectors import source_status
+
+    return source_status()
 
 
 _ensured = False

@@ -115,7 +115,14 @@ def diagnostics_page(request: Request) -> HTMLResponse:
 @app.get("/api/itsm/stats")
 def itsm_stats() -> dict:
     """Row counts per source — also confirms the data layer is loaded."""
-    return {"ok": True, "mode": config.mode(), "stats": datasources.stats()}
+    return {"ok": True, "mode": config.mode(), "stats": datasources.stats(),
+            "source": datasources.data_source()}
+
+
+@app.get("/api/itsm/source")
+def itsm_source() -> dict:
+    """Which data connector is active (mock CSV vs live ServiceNow)."""
+    return {"ok": True, **datasources.data_source()}
 
 
 @app.get("/api/itsm/hotspots")

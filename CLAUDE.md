@@ -32,8 +32,12 @@ C:\Users\surpanda\tools\python312\python.exe -m unittest discover -s tests -t .
 - `app/ingest.py` — extracts text/tables/metadata from PDF, Word, Excel, PowerPoint, CSV, text, images.
 - `app/analysis.py` — heuristic issue/request + trend engine. `analyze_documents()` is the swap point
   for a real LLM (`analyze_with_claude()` is the ready example, incl. image/vision).
-- `app/datasources.py` — ITSM data layer: loads the 4 ServiceNow CSVs (INC/PRB/CR/TSK) into a local
+- `app/datasources.py` — ITSM data layer: loads the 4 datasets via the active connector into a local
   SQLite DB (`data/itsm.db`, lazy-built, indexed on cmdb_ci/group/dates, FTS5 on incidents) + query helpers.
+- `app/connectors/` — pluggable data sources behind a common `ITSMConnector` interface:
+  `MockConnector` (local CSVs, default) and `ServiceNowConnector` (live REST Table API, stdlib only).
+  Select via `VE_ITSM_SOURCE=mock|servicenow`; ServiceNow needs `SERVICENOW_INSTANCE` + creds (see .env.example).
+  Falls back to mock if ServiceNow isn't configured. `/api/itsm/source` reports the active source.
 - `app/diagnostics.py` — AIOps engine: `rca()`, `change_impact()`, `similar()`, `hotspots()`. Each pairs
   deterministic correlation with Claude reasoning (heuristic fallback when no key).
 - `app/templates/`, `app/static/` — chat UI (`index.html`) + diagnostics UI (`diagnostics.html`/`.js`).
