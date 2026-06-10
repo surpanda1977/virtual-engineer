@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Virtual Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
@@ -12,11 +14,12 @@
       <div class="brand">
         <span class="logo">⚙️</span>
         <div>
-          <h1>Virtual Engineer</h1>
-          <p class="tagline">Your AI pair-programming assistant</p>
+          <h1>Virtual <span class="accent-word">Engineer</span></h1>
+          <p class="tagline">AI pair-programming assistant</p>
         </div>
       </div>
       <div class="header-right">
+        <span class="wordmark">Deloitte<span class="dot">.</span></span>
         <span class="badge" id="mode-badge">{% if mode == "claude" %}🟢 Claude API{% else %}offline mock{% endif %}</span>
         <a class="navlink" href="/diagnostics">🩺 Diagnostics</a>
       </div>
