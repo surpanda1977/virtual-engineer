@@ -2,9 +2,26 @@
 
 import io
 import unittest
+from unittest import mock
 
+from app import config
 from app.analysis import analyze_documents
 from app.ingest import ExtractedDoc, extract
+
+# Force the deterministic offline/heuristic path even when a real
+# ANTHROPIC_API_KEY is set, so unit tests never hit the network.
+_patcher = None
+
+
+def setUpModule():
+    global _patcher
+    _patcher = mock.patch.object(config, "use_real_llm", return_value=False)
+    _patcher.start()
+
+
+def tearDownModule():
+    if _patcher:
+        _patcher.stop()
 
 
 def _csv_bytes() -> bytes:

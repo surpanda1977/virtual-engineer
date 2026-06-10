@@ -7,8 +7,26 @@ or with the bundled unittest runner (from the project root):
 """
 
 import unittest
+from unittest import mock
 
+from app import config
 from app.engineer import classify, generate_reply
+
+# Unit tests must be deterministic and offline — force the mock path even when a
+# real ANTHROPIC_API_KEY is configured in .env. (The live Claude path is verified
+# separately.)
+_patcher = None
+
+
+def setUpModule():
+    global _patcher
+    _patcher = mock.patch.object(config, "use_real_llm", return_value=False)
+    _patcher.start()
+
+
+def tearDownModule():
+    if _patcher:
+        _patcher.stop()
 
 
 class TestClassify(unittest.TestCase):

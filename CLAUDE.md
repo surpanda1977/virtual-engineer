@@ -27,13 +27,27 @@ C:\Users\surpanda\tools\python312\python.exe -m unittest discover -s tests -t .
 ```
 
 ## Layout
-- `app/main.py` — FastAPI app, routes (`/`, `/api/health`, `/api/chat`, `/api/analyze`).
+- `app/main.py` — FastAPI app, routes (`/`, `/diagnostics`, `/api/health`, `/api/chat`, `/api/analyze`, `/api/itsm/*`).
 - `app/engineer.py` — the chat "brain". `generate_reply()` is the swap point for a real LLM.
 - `app/ingest.py` — extracts text/tables/metadata from PDF, Word, Excel, PowerPoint, CSV, text, images.
 - `app/analysis.py` — heuristic issue/request + trend engine. `analyze_documents()` is the swap point
   for a real LLM (`analyze_with_claude()` is the ready example, incl. image/vision).
-- `app/templates/`, `app/static/` — the chat UI (chat + attach-files document analysis).
-- `tests/` — unittest suite (`test_engineer.py`, `test_analysis.py`).
+- `app/datasources.py` — ITSM data layer: loads the 4 ServiceNow CSVs (INC/PRB/CR/TSK) into a local
+  SQLite DB (`data/itsm.db`, lazy-built, indexed on cmdb_ci/group/dates, FTS5 on incidents) + query helpers.
+- `app/diagnostics.py` — AIOps engine: `rca()`, `change_impact()`, `similar()`, `hotspots()`. Each pairs
+  deterministic correlation with Claude reasoning (heuristic fallback when no key).
+- `app/templates/`, `app/static/` — chat UI (`index.html`) + diagnostics UI (`diagnostics.html`/`.js`).
+- `tests/` — unittest suite. Test modules force offline mode via `setUpModule` (patch `config.use_real_llm`)
+  so tests stay deterministic even with a real key in `.env`.
+
+## Incident Diagnostics (AIOps copilot) — /diagnostics
+- Data: 4 ServiceNow CSV exports live in git-ignored `data/` (Incidents ~59k, Tasks ~70k, Changes ~4k,
+  Problems ~92). Shared correlation key is `cmdb_ci`; also `assignment_group` + timestamps.
+- `data/` and `*.db` are git-ignored — **never commit the ITSM data** (the GitHub repo is public).
+- The DB rebuilds automatically when a CSV is newer than `data/itsm.db`.
+- Four capabilities: root-cause analysis, change-impact correlation, similar-incident retrieval, hotspots/trends.
+- Note: this is ITSM *ticket* data — no live metrics/logs/traces/topology graph. Those would plug in as
+  future data sources in `datasources.py`.
 
 ## Document analysis feature
 - Attach files in the UI (📎) → POST multipart to `/api/analyze` → renders an insights report

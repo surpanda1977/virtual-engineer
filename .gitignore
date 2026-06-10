@@ -10,6 +10,10 @@ venv/
 .env
 *.local
 
+# Internal ITSM data — never publish to the public repo
+data/
+*.db
+
 # Claude Code local (machine-specific) settings
 .claude/settings.local.json
 

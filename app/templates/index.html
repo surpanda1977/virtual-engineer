@@ -16,7 +16,10 @@
           <p class="tagline">Your AI pair-programming assistant</p>
         </div>
       </div>
-      <span class="badge" id="mode-badge">{% if mode == "claude" %}🟢 Claude API{% else %}offline mock{% endif %}</span>
+      <div class="header-right">
+        <span class="badge" id="mode-badge">{% if mode == "claude" %}🟢 Claude API{% else %}offline mock{% endif %}</span>
+        <a class="navlink" href="/diagnostics">🩺 Diagnostics</a>
+      </div>
     </header>
 
     <main class="chat" id="chat">

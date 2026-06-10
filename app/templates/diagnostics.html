@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Engineer · Incident Diagnostics</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="diag">
+    <header class="header">
+      <div class="brand">
+        <span class="logo">🩺</span>
+        <div>
+          <h1>Incident Diagnostics</h1>
+          <p class="tagline">AIOps copilot · correlation · RCA · change impact</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="badge" id="mode-badge">{% if mode == "claude" %}🟢 Claude API{% else %}offline mock{% endif %}</span>
+        <a class="navlink" href="/">💬 Chat</a>
+      </div>
+    </header>
+
+    <div class="stat-cards" id="stat-cards"><div class="stat"><b>…</b><span>loading data</span></div></div>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="rca">🔍 Root Cause</button>
+      <button class="tab" data-tab="change">🔧 Change Impact</button>
+      <button class="tab" data-tab="similar">📚 Similar Incidents</button>
+      <button class="tab" data-tab="hotspots">📊 Hotspots &amp; Trends</button>
+    </nav>
+
+    <!-- RCA -->
+    <section class="panel active" id="panel-rca">
+      <p class="hint">Enter an incident number (e.g. <code>INC1028401</code>) or a configuration item (e.g. <code>BeeHive Platform</code>). The copilot correlates incidents, problems, and changes on that CI, then generates a root-cause analysis.</p>
+      <div class="controls">
+        <input id="rca-input" placeholder="INC… or a CI name" />
+        <button id="rca-go">Diagnose</button>
+      </div>
+      <div id="rca-out" class="output"></div>
+    </section>
+
+    <!-- Change impact -->
+    <section class="panel" id="panel-change">
+      <p class="hint">Detects changes that were followed by incidents on the <em>same</em> CI within a time window — a signal for change-induced incidents (correlation, not proof).</p>
+      <div class="controls">
+        <label>Window (hours): <input id="change-window" type="number" value="72" min="1" max="720" style="width:80px" /></label>
+        <button id="change-go">Analyze changes</button>
+      </div>
+      <div id="change-out" class="output"></div>
+    </section>
+
+    <!-- Similar -->
+    <section class="panel" id="panel-similar">
+      <p class="hint">Describe a new incident; the copilot retrieves the most similar past incidents and recommends a resolution path based on how they were solved.</p>
+      <div class="controls">
+        <textarea id="similar-input" rows="2" placeholder="Describe the issue, e.g. 'user cannot connect to VPN after password change'"></textarea>
+        <button id="similar-go">Find &amp; advise</button>
+      </div>
+      <div id="similar-out" class="output"></div>
+    </section>
+
+    <!-- Hotspots -->
+    <section class="panel" id="panel-hotspots">
+      <p class="hint">Portfolio view: where incidents concentrate, recurring problem areas, and volume trends — with an AI executive summary.</p>
+      <div class="controls"><button id="hotspots-go">Load hotspots</button></div>
+      <div id="hotspots-out" class="output"></div>
+    </section>
+
+    <footer class="footer">v{{ version }} · diagnostics over local ITSM data · powered by FastAPI + Claude</footer>
+  </div>
+
+  <script src="/static/diagnostics.js"></script>
+</body>
+</html>
