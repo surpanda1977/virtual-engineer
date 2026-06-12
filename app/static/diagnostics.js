@@ -104,9 +104,25 @@ async function loadCIs() {
   const sel = $("rca-ci");
   try {
     const d = await (await fetch(withDS("/api/itsm/cis?limit=1000"))).json();
-    sel.innerHTML = '<option value="">Select a configuration item…</option>' +
-      (d.cis || []).map((c) =>
-        `<option value="${escapeHtml(c.ci)}">${escapeHtml(c.ci)} (${c.incidents})</option>`).join("");
+    const cis = d.cis || [];
+    if (!cis.length) {
+      sel.innerHTML = '<option value="">No configuration items in this dataset</option>';
+      return;
+    }
+    // Group CIs by their high-level category; order groups by total volume.
+    const groups = {};
+    cis.forEach((c) => { (groups[c.category] = groups[c.category] || []).push(c); });
+    const ordered = Object.entries(groups).sort(
+      (a, b) => b[1].reduce((s, x) => s + x.incidents, 0) - a[1].reduce((s, x) => s + x.incidents, 0));
+    let html = '<option value="">Select a configuration item…</option>';
+    ordered.forEach(([cat, items]) => {
+      html += `<optgroup label="${escapeHtml(cat)} (${items.length})">`;
+      items.forEach((c) => {
+        html += `<option value="${escapeHtml(c.ci)}">${escapeHtml(c.ci)} (${c.incidents})</option>`;
+      });
+      html += "</optgroup>";
+    });
+    sel.innerHTML = html;
   } catch (e) {
     sel.innerHTML = '<option value="">Could not load configuration items</option>';
   }

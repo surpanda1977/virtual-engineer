@@ -326,16 +326,48 @@ def hotspots(top: int = 10, db_path: str | Path | None = None) -> dict:
         conn.close()
 
 
+# High-level CI grouping (first match wins; heuristic over the free-text CI name).
+_CI_CATEGORY_RULES = [
+    ("End-user & Devices", ("laptop", "desktop", "printer", "monitor", "mobile", "phone",
+                            "ipad", "iphone", "macbook", "workstation", "scanner", "headset", "webcam", "tablet")),
+    ("Network", ("vpn", "gateway", "router", "switch", "firewall", " dns", "dhcp", "wifi", "wi-fi",
+                 " lan", " wan", "circuit", "proxy", "load balancer", "f5", "network", "vlan")),
+    ("Database", ("sql", "oracle", "database", " db ", "mysql", "postgres", "mongo", "snowflake",
+                  "sybase", "db2", "redis", "cosmos")),
+    ("Infrastructure & Servers", ("server", "host", " vm", "virtual machine", "cluster", "storage",
+                                  " san", " nas", "backup", "datacenter", "data center", "wintel", "unix",
+                                  "linux", "vmware", "citrix", "esx", "hypervisor", "mainframe")),
+    ("Cloud & SaaS", ("onedrive", "sharepoint", "teams", "office 365", "o365", "azure", "aws", "gcp",
+                      "exchange online", "salesforce", "workday", "concur", "okta", "servicenow", " sap")),
+    ("Security & Identity", ("security", "antivirus", "defender", "crowdstrike", "sentinel", "identity",
+                             "active directory", "okta", "mfa", "iam", "phishing")),
+    ("Applications", ("platform", "application", " app", "tool", "portal", "system", "service", "report",
+                      "dashboard", "website", " web", "intranet", "erp", "crm", "module", "ingenius", "beehive")),
+]
+
+
+def _ci_category(name: str) -> str:
+    n = f" {(name or '').lower()} "
+    if not n.strip() or "unknown" in n:
+        return "Other"
+    for cat, kws in _CI_CATEGORY_RULES:
+        if any(k in n for k in kws):
+            return cat
+    return "Applications"  # most named CMDB items are business applications
+
+
 def list_cis(limit: int = 1000, db_path: str | Path | None = None) -> list[dict]:
-    """Distinct configuration items, ordered by incident volume (for dropdowns)."""
+    """Distinct configuration items + inferred high-level category, by volume."""
     conn = get_connection(db_path)
     try:
         if "cmdb_ci" not in _table_columns(conn, "incidents"):
             return []
-        return [dict(r) for r in conn.execute(
+        rows = conn.execute(
             "SELECT cmdb_ci AS ci, COUNT(*) AS incidents FROM incidents "
             "WHERE cmdb_ci IS NOT NULL AND cmdb_ci != '' "
-            "GROUP BY cmdb_ci ORDER BY incidents DESC LIMIT ?", (limit,))]
+            "GROUP BY cmdb_ci ORDER BY incidents DESC LIMIT ?", (limit,)).fetchall()
+        return [{"ci": r["ci"], "incidents": r["incidents"], "category": _ci_category(r["ci"])}
+                for r in rows]
     finally:
         conn.close()
 
