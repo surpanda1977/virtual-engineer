@@ -36,10 +36,22 @@
 
     <!-- RCA -->
     <section class="panel active" id="panel-rca">
-      <p class="hint">Enter an incident number (e.g. <code>INC1028401</code>) or a configuration item (e.g. <code>BeeHive Platform</code>). The copilot correlates incidents, problems, and changes on that CI, then generates a root-cause analysis.</p>
-      <div class="controls">
-        <input id="rca-input" placeholder="INC… or a CI name" />
-        <button id="rca-go">Diagnose</button>
+      <p class="hint">Diagnose by <strong>incident number</strong>, or pick a <strong>configuration item</strong> from the list. The copilot correlates incidents, problems, and changes on that CI, then generates a root-cause analysis.</p>
+      <div class="option-grid">
+        <div class="option-card">
+          <span class="option-label">Option A · by incident</span>
+          <div class="controls">
+            <input id="rca-input" placeholder="Incident number, e.g. INC1028401" />
+            <button id="rca-go">Diagnose incident</button>
+          </div>
+        </div>
+        <div class="option-card">
+          <span class="option-label">Option B · by configuration item</span>
+          <div class="controls">
+            <select id="rca-ci"><option value="">Loading configuration items…</option></select>
+            <button id="rca-ci-go">Diagnose CI</button>
+          </div>
+        </div>
       </div>
       <div id="rca-out" class="output"></div>
     </section>
@@ -66,8 +78,27 @@
 
     <!-- Hotspots -->
     <section class="panel" id="panel-hotspots">
-      <p class="hint">Portfolio view: where incidents concentrate, recurring problem areas, and volume trends — with an AI executive summary.</p>
-      <div class="controls"><button id="hotspots-go">Load hotspots</button></div>
+      <p class="hint">Portfolio view: where incidents concentrate, recurring problem areas, and volume trends — with an AI executive summary. Use the menus to break incidents down by any dimension.</p>
+      <div class="controls">
+        <button id="hotspots-go">Load portfolio</button>
+        <label>Break down by:
+          <select id="hot-dim">
+            <option value="cmdb_ci">Configuration Item</option>
+            <option value="assignment_group">Assignment Group</option>
+            <option value="category" selected>Category</option>
+            <option value="subcategory">Subcategory</option>
+            <option value="priority">Priority</option>
+            <option value="incident_state">State</option>
+            <option value="contact_type">Contact Type</option>
+          </select>
+        </label>
+        <label>Top
+          <select id="hot-top">
+            <option>10</option><option selected>15</option><option>25</option>
+          </select>
+        </label>
+      </div>
+      <div id="hot-breakdown" class="output"></div>
       <div id="hotspots-out" class="output"></div>
     </section>
 

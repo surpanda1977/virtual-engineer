@@ -34,15 +34,22 @@ function table(rows, cols) {
   return `<table class="dx-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
 }
 
-function bars(rows, labelKey, valKey) {
+// Deloitte brand chart sequence (green first), used to give each category a distinct color.
+const PALETTE = ["#86BC25", "#00A3E0", "#282728", "#63C631", "#A0DCFF", "#005587",
+                 "#B7E320", "#0076A8", "#46B870", "#9DD4CF"];
+
+function bars(rows, labelKey, valKey, colored = false) {
   if (!rows || !rows.length) return "<p class='muted'>No data.</p>";
   const max = Math.max(1, ...rows.map((r) => r[valKey]));
-  return rows.map((r) => `
+  return rows.map((r, i) => {
+    const color = colored ? PALETTE[i % PALETTE.length] : "var(--dl-green)";
+    return `
     <div class="bar-row">
       <span class="bar-label" title="${escapeHtml(r[labelKey])}">${escapeHtml(r[labelKey])}</span>
-      <span class="bar-track"><span class="bar-fill" style="width:${(r[valKey] / max) * 100}%"></span></span>
+      <span class="bar-track"><span class="bar-fill" style="width:${(r[valKey] / max) * 100}%;background:${color}"></span></span>
       <span class="bar-val">${r[valKey]}</span>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 // --- Tabs ---
@@ -72,9 +79,21 @@ async function loadStats() {
   }
 }
 
-// --- RCA ---
-$("rca-go").onclick = async () => {
-  const id = $("rca-input").value.trim();
+// --- Populate the Configuration Item dropdown ---
+async function loadCIs() {
+  const sel = $("rca-ci");
+  try {
+    const d = await (await fetch("/api/itsm/cis?limit=1000")).json();
+    sel.innerHTML = '<option value="">Select a configuration item…</option>' +
+      (d.cis || []).map((c) =>
+        `<option value="${escapeHtml(c.ci)}">${escapeHtml(c.ci)} (${c.incidents})</option>`).join("");
+  } catch (e) {
+    sel.innerHTML = '<option value="">Could not load configuration items</option>';
+  }
+}
+
+// --- RCA (shared by the incident box and the CI dropdown) ---
+async function runRca(id) {
   if (!id) return;
   const out = $("rca-out");
   spinner(out, `Correlating ITSM records for "${id}" and generating RCA…`);
@@ -98,8 +117,11 @@ $("rca-go").onclick = async () => {
           ${table(d.similar, [{key:"number",label:"INC"},{key:"short_description",label:"Summary"},{key:"close_code",label:"Resolution"}])}</details>
       </div>`;
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
-};
-$("rca-input").addEventListener("keydown", (e) => { if (e.key === "Enter") $("rca-go").click(); });
+}
+$("rca-go").onclick = () => runRca($("rca-input").value.trim());
+$("rca-input").addEventListener("keydown", (e) => { if (e.key === "Enter") runRca($("rca-input").value.trim()); });
+$("rca-ci-go").onclick = () => runRca($("rca-ci").value);
+$("rca-ci").addEventListener("change", () => runRca($("rca-ci").value));
 
 // --- Change impact ---
 $("change-go").onclick = async () => {
@@ -135,8 +157,22 @@ $("similar-go").onclick = async () => {
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 };
 
-// --- Hotspots ---
+// --- Hotspots: interactive breakdown (responds to the dropdowns) ---
+async function renderBreakdown() {
+  const by = $("hot-dim").value, top = $("hot-top").value;
+  const out = $("hot-breakdown");
+  out.innerHTML = `<p class="muted">Loading breakdown…</p>`;
+  try {
+    const d = await (await fetch(`/api/itsm/breakdown?by=${by}&top=${top}`)).json();
+    out.innerHTML = `<h4>📊 Incidents by ${escapeHtml(d.label)}</h4>${bars(d.rows, "label", "count", true)}`;
+  } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
+}
+$("hot-dim").onchange = renderBreakdown;
+$("hot-top").onchange = renderBreakdown;
+
+// --- Hotspots: portfolio summary + executive narrative ---
 $("hotspots-go").onclick = async () => {
+  renderBreakdown();
   const out = $("hotspots-out");
   spinner(out, "Aggregating portfolio and writing executive summary…");
   try {
@@ -150,11 +186,12 @@ $("hotspots-go").onclick = async () => {
         <div class="stat"><b>${(d.reopened || 0).toLocaleString()}</b><span>reopened</span></div>
         <div class="stat"><b>${(d.major_incidents || 0).toLocaleString()}</b><span>major incidents</span></div>
       </div>
-      <h4>🖥️ Top CIs by incidents</h4>${bars(d.top_cis, "ci", "incidents")}
-      <h4>👥 Top assignment groups</h4>${bars(d.top_groups, "team", "incidents")}
-      <h4>🗂️ Top categories</h4>${bars(d.top_categories, "category", "incidents")}
+      <h4>🖥️ Top CIs by incidents</h4>${bars(d.top_cis, "ci", "incidents", true)}
+      <h4>👥 Top assignment groups</h4>${bars(d.top_groups, "team", "incidents", true)}
+      <h4>🗂️ Top categories</h4>${bars(d.top_categories, "category", "incidents", true)}
       <h4>📈 Monthly volume</h4>${bars(d.by_month, "month", "incidents")}`;
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 };
 
 loadStats();
+loadCIs();

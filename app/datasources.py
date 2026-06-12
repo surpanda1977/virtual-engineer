@@ -300,6 +300,46 @@ def hotspots(top: int = 10) -> dict:
         conn.close()
 
 
+def list_cis(limit: int = 1000) -> list[dict]:
+    """Distinct configuration items, ordered by incident volume (for dropdowns)."""
+    conn = get_connection()
+    try:
+        return [dict(r) for r in conn.execute(
+            "SELECT cmdb_ci AS ci, COUNT(*) AS incidents FROM incidents "
+            "WHERE cmdb_ci IS NOT NULL AND cmdb_ci != '' "
+            "GROUP BY cmdb_ci ORDER BY incidents DESC LIMIT ?", (limit,))]
+    finally:
+        conn.close()
+
+
+# Incident columns that make sense to break down by (whitelist — used in SQL).
+BREAKDOWN_FIELDS = {
+    "cmdb_ci": "Configuration Item",
+    "assignment_group": "Assignment Group",
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "priority": "Priority",
+    "incident_state": "State",
+    "contact_type": "Contact Type",
+}
+
+
+def breakdown(by: str = "category", top: int = 12) -> dict:
+    """Incident counts grouped by a whitelisted dimension."""
+    conn = get_connection()
+    try:
+        cols = _table_columns(conn, "incidents")
+        if by not in BREAKDOWN_FIELDS or by not in cols:
+            by = "category" if "category" in cols else "cmdb_ci"
+        rows = conn.execute(
+            f'SELECT "{by}" AS label, COUNT(*) AS count FROM incidents '
+            f'WHERE "{by}" IS NOT NULL AND "{by}" != \'\' '
+            f'GROUP BY "{by}" ORDER BY count DESC LIMIT ?', (top,)).fetchall()
+        return {"by": by, "label": BREAKDOWN_FIELDS.get(by, by), "rows": [dict(r) for r in rows]}
+    finally:
+        conn.close()
+
+
 def change_incident_correlation(window_hours: int = 72, top: int = 15) -> list[dict]:
     """Find changes followed by incidents on the same CI within `window_hours`.
 

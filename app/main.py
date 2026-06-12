@@ -130,6 +130,18 @@ def itsm_hotspots(top: int = 10) -> dict:
     return {"ok": True, **diagnostics.hotspots(top=top)}
 
 
+@app.get("/api/itsm/cis")
+def itsm_cis(limit: int = 1000) -> dict:
+    """Configuration items (by incident volume) for the RCA dropdown."""
+    return {"ok": True, "cis": datasources.list_cis(limit)}
+
+
+@app.get("/api/itsm/breakdown")
+def itsm_breakdown(by: str = "category", top: int = 15) -> dict:
+    """Incident counts grouped by a chosen dimension (for Hotspots dropdowns)."""
+    return {"ok": True, **datasources.breakdown(by=by, top=top)}
+
+
 @app.get("/api/itsm/rca")
 def itsm_rca(id: str) -> dict:
     """Root-cause analysis for an incident number (INC…) or a CI name."""
