@@ -58,6 +58,20 @@ function table(rows, cols) {
 const PALETTE = ["#86BC25", "#00A3E0", "#282728", "#63C631", "#A0DCFF", "#005587",
                  "#B7E320", "#0076A8", "#46B870", "#9DD4CF"];
 
+// Render a result inside a themed card: header (title + source + Clear) and body.
+function showResult(outEl, { title, source, body }) {
+  outEl.innerHTML = `
+    <div class="result-card">
+      <div class="result-head">
+        <span class="result-title">${escapeHtml(title || "Result")}</span>
+        <span class="result-head-right">${source ? sourceTag(source) : ""}
+          <button class="clear-btn" type="button" title="Clear these results">✕ Clear</button></span>
+      </div>
+      <div class="result-body">${body}</div>
+    </div>`;
+  outEl.querySelector(".clear-btn").onclick = () => { outEl.innerHTML = ""; };
+}
+
 function bars(rows, labelKey, valKey, colored = false) {
   if (!rows || !rows.length) return "<p class='muted'>No data.</p>";
   const max = Math.max(1, ...rows.map((r) => r[valKey]));
@@ -137,9 +151,11 @@ async function runRca(id) {
     const d = await (await fetch(withDS("/api/itsm/rca?id=" + encodeURIComponent(id)))).json();
     if (!d.ok) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(d.error)}</p>`; return; }
     const c = d.correlation;
-    out.innerHTML = `
-      ${sourceTag(d.source)}
-      <div class="rca-narrative">${md(d.rca)}</div>
+    showResult(out, {
+      source: d.source,
+      title: `Root cause — ${d.incident ? d.incident.number + " · " : ""}${d.cmdb_ci}`,
+      body: `
+      <div class="narrative">${md(d.rca)}</div>
       <div class="evidence">
         <h4>📋 Correlated evidence — CI: <code>${escapeHtml(d.cmdb_ci)}</code>
           <span class="muted">(${c.incident_count} incidents, ${c.change_count} changes on this CI)</span></h4>
@@ -151,7 +167,7 @@ async function runRca(id) {
           ${table(c.changes, [{key:"number",label:"CHG"},{key:"type",label:"Type"},{key:"approval",label:"Approval"},{key:"created_iso",label:"Created"}])}</details>
         <details><summary>Similar past incidents (${d.similar.length})</summary>
           ${table(d.similar, [{key:"number",label:"INC"},{key:"short_description",label:"Summary"},{key:"close_code",label:"Resolution"}])}</details>
-      </div>`;
+      </div>` });
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 }
 $("rca-go").onclick = () => runRca($("rca-input").value.trim());
@@ -166,11 +182,13 @@ $("change-go").onclick = async () => {
   spinner(out, "Correlating changes with subsequent incidents…");
   try {
     const d = await (await fetch(withDS(`/api/itsm/change-impact?window_hours=${w}`))).json();
-    out.innerHTML = `
-      ${sourceTag(d.source)}
-      <div class="rca-narrative">${md(d.summary)}</div>
+    showResult(out, {
+      source: d.source,
+      title: `Change impact · last ${escapeHtml(d.window_hours)}h`,
+      body: `
+      <div class="narrative">${md(d.summary)}</div>
       <h4>Changes followed by incidents on the same CI (within ${escapeHtml(d.window_hours)}h)</h4>
-      ${table(d.correlations, [{key:"change",label:"Change"},{key:"type",label:"Type"},{key:"ci",label:"CI"},{key:"change_time",label:"Change time"},{key:"incidents_after",label:"Incidents after"}])}`;
+      ${table(d.correlations, [{key:"change",label:"Change"},{key:"type",label:"Type"},{key:"ci",label:"CI"},{key:"change_time",label:"Change time"},{key:"incidents_after",label:"Incidents after"}])}` });
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 };
 
@@ -185,11 +203,13 @@ $("similar-go").onclick = async () => {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
     })).json();
-    out.innerHTML = `
-      ${sourceTag(d.source)}
-      <div class="rca-narrative">${md(d.guidance)}</div>
+    showResult(out, {
+      source: d.source,
+      title: "Similar incidents & recommended resolution",
+      body: `
+      <div class="narrative">${md(d.guidance)}</div>
       <h4>Most similar past incidents (${d.matches.length})</h4>
-      ${table(d.matches, [{key:"number",label:"INC"},{key:"short_description",label:"Summary"},{key:"close_code",label:"Resolution"},{key:"assignment_group",label:"Team"}])}`;
+      ${table(d.matches, [{key:"number",label:"INC"},{key:"short_description",label:"Summary"},{key:"close_code",label:"Resolution"},{key:"assignment_group",label:"Team"}])}` });
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 };
 
@@ -214,9 +234,11 @@ $("hotspots-go").onclick = async () => {
   try {
     const d = await (await fetch(withDS("/api/itsm/hotspots?top=10"))).json();
     const sla = d.sla || {};
-    out.innerHTML = `
-      ${sourceTag(d.source)}
-      <div class="rca-narrative">${md(d.summary)}</div>
+    showResult(out, {
+      source: d.source,
+      title: "Portfolio hotspots & trends",
+      body: `
+      <div class="narrative">${md(d.summary)}</div>
       <div class="stat-cards">
         <div class="stat"><b>${(sla.breach_pct ?? 0)}%</b><span>SLA breach</span></div>
         <div class="stat"><b>${(d.reopened || 0).toLocaleString()}</b><span>reopened</span></div>
@@ -225,7 +247,7 @@ $("hotspots-go").onclick = async () => {
       <h4>🖥️ Top CIs by incidents</h4>${bars(d.top_cis, "ci", "incidents", true)}
       <h4>👥 Top assignment groups</h4>${bars(d.top_groups, "team", "incidents", true)}
       <h4>🗂️ Top categories</h4>${bars(d.top_categories, "category", "incidents", true)}
-      <h4>📈 Monthly volume</h4>${bars(d.by_month, "month", "incidents")}`;
+      <h4>📈 Monthly volume</h4>${bars(d.by_month, "month", "incidents")}` });
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 };
 

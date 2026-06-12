@@ -63,6 +63,7 @@ _RCA_SYSTEM = (
     "4) **Recommended actions** — concrete next steps / likely fix, drawing on how similar "
     "incidents were resolved.\n"
     "5) **Confidence** — high/medium/low and why.\n"
+    "6) **Conclusion** — one or two sentences: the bottom line and the single most important next action.\n"
     "Be specific and concise. Use **bold** labels, NOT markdown headings (no '#')."
 )
 
@@ -153,7 +154,8 @@ _CHANGE_SYSTEM = (
     "incidents on the same configuration item within a short window. Identify which changes "
     "look genuinely risky (likely change-induced incidents) versus coincidental — high-volume "
     "CIs naturally see many incidents, so a high count alone is not proof. Be specific, cite "
-    "CHG/CI names, and recommend what to review. Use **bold** labels, no markdown headings."
+    "CHG/CI names, and recommend what to review. End with a **Conclusion** line: the single most "
+    "important takeaway. Use **bold** labels, no markdown headings."
 )
 
 
@@ -190,7 +192,7 @@ _SIMILAR_SYSTEM = (
     "You are a support knowledge assistant. Given a new incident description and the most "
     "similar past incidents (with their resolution/close codes and notes), recommend the most "
     "likely resolution path as a short, ordered set of steps. Cite the INC numbers you drew from. "
-    "Use **bold** labels, no markdown headings."
+    "End with a **Conclusion** line: the single recommended next step. Use **bold** labels, no markdown headings."
 )
 
 
@@ -218,7 +220,8 @@ _HOTSPOT_SYSTEM = (
     "You are an IT operations analyst writing a brief executive summary of an incident "
     "portfolio. Given top configuration items, assignment groups, categories, monthly volumes, "
     "and SLA/reopen/major-incident stats, highlight the most important risks and where to focus "
-    "improvement effort. Be concise. Use **bold** labels, no markdown headings."
+    "improvement effort. End with a **Conclusion** line: the top priority to act on. "
+    "Be concise. Use **bold** labels, no markdown headings."
 )
 
 
