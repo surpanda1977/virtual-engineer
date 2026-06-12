@@ -230,6 +230,11 @@ a { color: var(--dl-blue-dark); }
 }
 @media (max-width: 600px) { .hero h1 { font-size: 2rem; } .hero { padding: 30px 12px 18px; } }
 
+/* When uploading, focus the screen on the upload area only */
+.diag.upload-mode #stat-cards,
+.diag.upload-mode #tabs,
+.diag.upload-mode .panel { display: none; }
+
 /* --- Data source toggle + upload --- */
 .source-bar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 14px; }
 .source-label { color: var(--muted); font-size: 13px; font-weight: 600; }

@@ -238,6 +238,7 @@ function clearOutputs() {
 document.querySelectorAll(".seg-btn").forEach((b) => {
   b.onclick = () => {
     if (b.disabled || b.classList.contains("active")) return;
+    document.querySelector(".diag").classList.remove("upload-mode"); // reveal workspace
     document.querySelectorAll(".seg-btn").forEach((x) => x.classList.remove("active"));
     b.classList.add("active");
     activeDataset = b.dataset.ds;
@@ -248,7 +249,14 @@ document.querySelectorAll(".seg-btn").forEach((b) => {
 });
 
 // --- Upload your own data ---
-$("upload-toggle").onclick = () => { const a = $("upload-area"); a.hidden = !a.hidden; };
+// Opening the uploader focuses the screen on it: clear results + hide the
+// data cards / tabs / panels. Closing (or finishing) restores the workspace.
+function setUploadMode(on) {
+  $("upload-area").hidden = !on;
+  document.querySelector(".diag").classList.toggle("upload-mode", on);
+  if (on) clearOutputs();
+}
+$("upload-toggle").onclick = () => setUploadMode($("upload-area").hidden);
 
 $("upload-go").onclick = async () => {
   const input = $("ve-files");
@@ -267,6 +275,7 @@ $("upload-go").onclick = async () => {
       .map(([k, v]) => `${k}: ${Number(v).toLocaleString()}`).join(" · ");
     status.innerHTML = `<p>✅ Detected file types:</p><ul class="examples">${det}</ul>
       <p class="muted">Loaded — ${escapeHtml(counts)}. Now analyzing <strong>your</strong> data.</p>`;
+    document.querySelector(".diag").classList.remove("upload-mode"); // bring the workspace back
     const segMine = $("seg-mine");
     segMine.disabled = false;
     segMine.title = "Your uploaded data";
