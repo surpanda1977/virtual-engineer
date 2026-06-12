@@ -258,11 +258,11 @@ a { color: var(--dl-blue-dark); }
 .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 12px 0 18px; }
 .controls input, .controls textarea {
   flex: 1; min-width: 240px; background: var(--panel); color: var(--text); border: 1px solid var(--border);
-  border-radius: 9px; padding: 11px 13px; font: inherit;
+  border-radius: 10px; padding: 11px 13px; font: inherit;
 }
 .controls input:focus, .controls textarea:focus { outline: none; border-color: var(--dl-green); box-shadow: 0 0 0 3px rgba(134,188,37,0.15); }
 .controls button {
-  background: var(--dl-green); color: #fff; border: none; border-radius: 9px; padding: 11px 20px;
+  background: var(--dl-green); color: #fff; border: 1px solid transparent; border-radius: 10px; padding: 11px 20px;
   font-weight: 700; cursor: pointer; white-space: nowrap;
 }
 .controls button:hover { background: var(--dl-green-dark); }
@@ -274,14 +274,15 @@ a { color: var(--dl-blue-dark); }
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23282728' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
   background-repeat: no-repeat; background-position: right 12px center; background-size: 13px;
   color: var(--text); border: 1px solid var(--border); border-radius: 10px;
-  padding: 11px 38px 11px 13px; font-family: inherit; font-size: 14px; line-height: 1.2;
+  padding: 11px 38px 11px 13px; font-family: inherit; font-size: 14px; line-height: 1.5;
   max-width: 340px; cursor: pointer;
 }
 .controls select:hover { border-color: var(--dl-green); }
 .controls select:focus { outline: none; border-color: var(--dl-green); box-shadow: 0 0 0 3px rgba(134,188,37,0.15); }
-/* Keep all interactive controls visually consistent */
-.controls input, .controls textarea { font-family: inherit; font-size: 14px; }
-.controls button { font-size: 14px; }
+/* Keep all interactive controls identical height/metrics so they align in a row */
+.controls input, .controls textarea, .controls select, .controls button {
+  font-family: inherit; font-size: 14px; line-height: 1.5; box-sizing: border-box;
+}
 
 /* Two-option layout (Root Cause: incident box vs CI dropdown) */
 .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0 18px; }
