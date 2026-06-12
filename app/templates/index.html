@@ -26,6 +26,25 @@
       </div>
     </section>
 
+    <!-- Data source: base vs the user's own uploaded data -->
+    <div class="source-bar">
+      <span class="source-label">Analyzing:</span>
+      <div class="seg">
+        <button class="seg-btn active" data-ds="base">Base data</button>
+        <button class="seg-btn" data-ds="mine" id="seg-mine" disabled title="Upload your files first">My data</button>
+      </div>
+      <button id="upload-toggle" class="navlink">⬆ Upload my data</button>
+    </div>
+    <div id="upload-area" class="upload-area" hidden>
+      <p>Upload your own <strong>Incident, Problem, Change, and Task</strong> exports (CSV or Excel). I'll
+      auto-detect each file's type and analyze <em>your</em> data — kept isolated to your browser session.</p>
+      <div class="controls">
+        <input type="file" id="ve-files" multiple accept=".csv,.tsv,.xlsx,.xlsm" />
+        <button id="upload-go">Analyze my data</button>
+      </div>
+      <div id="upload-status" class="output"></div>
+    </div>
+
     <!-- Live data overview -->
     <div class="stat-cards" id="stat-cards"><div class="stat"><b>…</b><span>loading data</span></div></div>
 

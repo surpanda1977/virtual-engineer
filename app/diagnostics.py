@@ -67,11 +67,11 @@ _RCA_SYSTEM = (
 )
 
 
-def rca(identifier: str) -> dict:
+def rca(identifier: str, db_path: str | None = None) -> dict:
     identifier = (identifier or "").strip()
     incident = None
     if identifier.upper().startswith("INC"):
-        incident = ds.get_incident(identifier)
+        incident = ds.get_incident(identifier, db_path=db_path)
         if not incident:
             return {"ok": False, "error": f"Incident {identifier} not found."}
         ci = (incident.get("cmdb_ci") or "").strip()
@@ -81,9 +81,9 @@ def rca(identifier: str) -> dict:
     if not ci:
         return {"ok": False, "error": "No configuration item associated — can't correlate."}
 
-    corr = ds.correlate_ci(ci, limit=25)
+    corr = ds.correlate_ci(ci, limit=25, db_path=db_path)
     similar = ds.similar_incidents(
-        incident["short_description"] if incident else ci, k=6)
+        incident["short_description"] if incident else ci, k=6, db_path=db_path)
 
     # Build the evidence bundle for the model (compact, cited).
     parts = []
@@ -157,8 +157,8 @@ _CHANGE_SYSTEM = (
 )
 
 
-def change_impact(window_hours: int = 72, top: int = 15) -> dict:
-    correlations = ds.change_incident_correlation(window_hours=window_hours, top=top)
+def change_impact(window_hours: int = 72, top: int = 15, db_path: str | None = None) -> dict:
+    correlations = ds.change_incident_correlation(window_hours=window_hours, top=top, db_path=db_path)
     summary = None
     if correlations:
         evidence = f"Window: {window_hours}h after each change.\n" + _fmt(
@@ -194,8 +194,8 @@ _SIMILAR_SYSTEM = (
 )
 
 
-def similar(text: str, k: int = 8) -> dict:
-    matches = ds.similar_incidents(text, k=k)
+def similar(text: str, k: int = 8, db_path: str | None = None) -> dict:
+    matches = ds.similar_incidents(text, k=k, db_path=db_path)
     guidance = None
     if matches:
         evidence = f"NEW INCIDENT: {text}\n\nSIMILAR PAST INCIDENTS:\n" + _fmt(
@@ -222,8 +222,8 @@ _HOTSPOT_SYSTEM = (
 )
 
 
-def hotspots(top: int = 10) -> dict:
-    data = ds.hotspots(top=top)
+def hotspots(top: int = 10, db_path: str | None = None) -> dict:
+    data = ds.hotspots(top=top, db_path=db_path)
     evidence = (
         "TOP CIs BY INCIDENTS:\n" + _fmt(data.get("top_cis", []), ["ci", "incidents"], top) +
         "\n\nTOP ASSIGNMENT GROUPS:\n" + _fmt(data.get("top_groups", []), ["team", "incidents"], top) +

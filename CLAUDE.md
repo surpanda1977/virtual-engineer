@@ -50,6 +50,13 @@ C:\Users\surpanda\tools\python312\python.exe -m unittest discover -s tests -t .
 - `data/` and `*.db` are git-ignored — **never commit the ITSM data** (the GitHub repo is public).
 - The DB rebuilds automatically when a CSV is newer than `data/itsm.db`.
 - Four capabilities: root-cause analysis, change-impact correlation, similar-incident retrieval, hotspots/trends.
+- The home page (`/`) is the unified workspace: centered hero + the four capabilities (no separate
+  page; `/diagnostics` redirects to `/`). The old chat UI was removed.
+- **Bring-your-own data:** users can upload their own INC/PRB/CR/TSK files (CSV/XLSX). `/api/itsm/upload`
+  auto-detects each file's type (`_detect_dataset`) and builds an **isolated per-session** SQLite DB at
+  `data/sessions/<sid>.db` (sid from the browser's localStorage). A Base ⇄ My-data toggle routes every
+  diagnostic at the active dataset; all endpoints take `dataset` + `sid` params, resolved by `_db()` in main.py.
+  Query helpers are schema-aware (`_present`/`_count`) so uploads with differing columns still work.
 - Note: this is ITSM *ticket* data — no live metrics/logs/traces/topology graph. Those would plug in as
   future data sources in `datasources.py`.
 

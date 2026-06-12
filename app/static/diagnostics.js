@@ -1,6 +1,26 @@
 // Incident Diagnostics UI logic
 function $(id) { return document.getElementById(id); }
 
+// Per-session identity (for isolated uploaded datasets) + active dataset.
+const SID = (() => {
+  let s = localStorage.getItem("ve-sid");
+  if (!s) {
+    s = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : "s" + Date.now() + Math.random().toString(16).slice(2);
+    localStorage.setItem("ve-sid", s);
+  }
+  return s;
+})();
+let activeDataset = "base"; // "base" | "mine"
+
+// Append the active dataset (and session id when using "my data") to any API URL.
+function withDS(url) {
+  const sep = url.includes("?") ? "&" : "?";
+  let q = `dataset=${activeDataset}`;
+  if (activeDataset === "mine") q += `&sid=${encodeURIComponent(SID)}`;
+  return url + sep + q;
+}
+
 function escapeHtml(s) {
   return (s == null ? "" : String(s))
     .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -65,7 +85,7 @@ document.querySelectorAll(".tab").forEach((t) => {
 // --- Stats bar ---
 async function loadStats() {
   try {
-    const d = await (await fetch("/api/itsm/stats")).json();
+    const d = await (await fetch(withDS("/api/itsm/stats"))).json();
     const s = d.stats || {};
     const cards = [
       ["incidents", "Incidents"], ["changes", "Changes"],
@@ -83,7 +103,7 @@ async function loadStats() {
 async function loadCIs() {
   const sel = $("rca-ci");
   try {
-    const d = await (await fetch("/api/itsm/cis?limit=1000")).json();
+    const d = await (await fetch(withDS("/api/itsm/cis?limit=1000"))).json();
     sel.innerHTML = '<option value="">Select a configuration item…</option>' +
       (d.cis || []).map((c) =>
         `<option value="${escapeHtml(c.ci)}">${escapeHtml(c.ci)} (${c.incidents})</option>`).join("");
@@ -98,7 +118,7 @@ async function runRca(id) {
   const out = $("rca-out");
   spinner(out, `Correlating ITSM records for "${id}" and generating RCA…`);
   try {
-    const d = await (await fetch("/api/itsm/rca?id=" + encodeURIComponent(id))).json();
+    const d = await (await fetch(withDS("/api/itsm/rca?id=" + encodeURIComponent(id)))).json();
     if (!d.ok) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(d.error)}</p>`; return; }
     const c = d.correlation;
     out.innerHTML = `
@@ -129,7 +149,7 @@ $("change-go").onclick = async () => {
   const out = $("change-out");
   spinner(out, "Correlating changes with subsequent incidents…");
   try {
-    const d = await (await fetch(`/api/itsm/change-impact?window_hours=${w}`)).json();
+    const d = await (await fetch(withDS(`/api/itsm/change-impact?window_hours=${w}`))).json();
     out.innerHTML = `
       ${sourceTag(d.source)}
       <div class="rca-narrative">${md(d.summary)}</div>
@@ -145,7 +165,7 @@ $("similar-go").onclick = async () => {
   const out = $("similar-out");
   spinner(out, "Retrieving similar incidents and synthesising guidance…");
   try {
-    const d = await (await fetch("/api/itsm/similar", {
+    const d = await (await fetch(withDS("/api/itsm/similar"), {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
     })).json();
@@ -163,7 +183,7 @@ async function renderBreakdown() {
   const out = $("hot-breakdown");
   out.innerHTML = `<p class="muted">Loading breakdown…</p>`;
   try {
-    const d = await (await fetch(`/api/itsm/breakdown?by=${by}&top=${top}`)).json();
+    const d = await (await fetch(withDS(`/api/itsm/breakdown?by=${by}&top=${top}`))).json();
     out.innerHTML = `<h4>📊 Incidents by ${escapeHtml(d.label)}</h4>${bars(d.rows, "label", "count", true)}`;
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 }
@@ -176,7 +196,7 @@ $("hotspots-go").onclick = async () => {
   const out = $("hotspots-out");
   spinner(out, "Aggregating portfolio and writing executive summary…");
   try {
-    const d = await (await fetch("/api/itsm/hotspots?top=10")).json();
+    const d = await (await fetch(withDS("/api/itsm/hotspots?top=10"))).json();
     const sla = d.sla || {};
     out.innerHTML = `
       ${sourceTag(d.source)}
@@ -191,6 +211,51 @@ $("hotspots-go").onclick = async () => {
       <h4>🗂️ Top categories</h4>${bars(d.top_categories, "category", "incidents", true)}
       <h4>📈 Monthly volume</h4>${bars(d.by_month, "month", "incidents")}`;
   } catch (e) { out.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
+};
+
+// --- Data source toggle (Base ⇄ My data) ---
+function clearOutputs() {
+  ["rca-out", "change-out", "similar-out", "hot-breakdown", "hotspots-out"].forEach((id) => {
+    const e = $(id); if (e) e.innerHTML = "";
+  });
+}
+document.querySelectorAll(".seg-btn").forEach((b) => {
+  b.onclick = () => {
+    if (b.disabled || b.classList.contains("active")) return;
+    document.querySelectorAll(".seg-btn").forEach((x) => x.classList.remove("active"));
+    b.classList.add("active");
+    activeDataset = b.dataset.ds;
+    clearOutputs();
+    loadStats();
+    loadCIs();
+  };
+});
+
+// --- Upload your own data ---
+$("upload-toggle").onclick = () => { const a = $("upload-area"); a.hidden = !a.hidden; };
+
+$("upload-go").onclick = async () => {
+  const input = $("ve-files");
+  const status = $("upload-status");
+  if (!input.files.length) { status.innerHTML = `<p class="muted">Choose your files first.</p>`; return; }
+  status.innerHTML = `<p class="muted">⏳ Uploading and building your isolated dataset…</p>`;
+  try {
+    const fd = new FormData();
+    [...input.files].forEach((f) => fd.append("files", f));
+    const res = await fetch(`/api/itsm/upload?sid=${encodeURIComponent(SID)}`, { method: "POST", body: fd });
+    const d = await res.json();
+    if (!d.ok) { status.innerHTML = `<p class="err">⚠️ ${escapeHtml(d.error)}</p>`; return; }
+    const det = Object.entries(d.detected)
+      .map(([f, t]) => `<li>${escapeHtml(f)} → <strong>${escapeHtml(t)}</strong></li>`).join("");
+    const counts = Object.entries(d.counts).filter(([k]) => k !== "fts")
+      .map(([k, v]) => `${k}: ${Number(v).toLocaleString()}`).join(" · ");
+    status.innerHTML = `<p>✅ Detected file types:</p><ul class="examples">${det}</ul>
+      <p class="muted">Loaded — ${escapeHtml(counts)}. Now analyzing <strong>your</strong> data.</p>`;
+    const segMine = $("seg-mine");
+    segMine.disabled = false;
+    segMine.title = "Your uploaded data";
+    segMine.click(); // switch to My data + reload
+  } catch (e) { status.innerHTML = `<p class="err">⚠️ ${escapeHtml(e.message)}</p>`; }
 };
 
 loadStats();

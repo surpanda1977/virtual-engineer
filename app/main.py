@@ -110,47 +110,87 @@ def diagnostics_page() -> RedirectResponse:
     return RedirectResponse("/")
 
 
+def _db(dataset: str, sid: str) -> str | None:
+    """Resolve which DB to query: a session's uploaded data, or None for base."""
+    if dataset == "mine" and datasources.session_exists(sid):
+        p = datasources.session_db_path(sid)
+        return str(p) if p else None
+    return None
+
+
+def _source_label(dataset: str, sid: str) -> dict:
+    if dataset == "mine" and datasources.session_exists(sid):
+        return {"active": "my uploaded data", "scope": "session"}
+    return datasources.data_source()
+
+
 @app.get("/api/itsm/stats")
-def itsm_stats() -> dict:
-    """Row counts per source — also confirms the data layer is loaded."""
-    return {"ok": True, "mode": config.mode(), "stats": datasources.stats(),
-            "source": datasources.data_source()}
+def itsm_stats(dataset: str = "base", sid: str = "") -> dict:
+    """Row counts for the active dataset (base or this session's uploaded data)."""
+    return {"ok": True, "mode": config.mode(),
+            "stats": datasources.stats(db_path=_db(dataset, sid)),
+            "source": _source_label(dataset, sid)}
 
 
 @app.get("/api/itsm/source")
 def itsm_source() -> dict:
-    """Which data connector is active (mock CSV vs live ServiceNow)."""
+    """Which base data connector is active (mock CSV vs live ServiceNow)."""
     return {"ok": True, **datasources.data_source()}
 
 
 @app.get("/api/itsm/hotspots")
-def itsm_hotspots(top: int = 10) -> dict:
-    return {"ok": True, **diagnostics.hotspots(top=top)}
+def itsm_hotspots(top: int = 10, dataset: str = "base", sid: str = "") -> dict:
+    return {"ok": True, **diagnostics.hotspots(top=top, db_path=_db(dataset, sid))}
 
 
 @app.get("/api/itsm/cis")
-def itsm_cis(limit: int = 1000) -> dict:
+def itsm_cis(limit: int = 1000, dataset: str = "base", sid: str = "") -> dict:
     """Configuration items (by incident volume) for the RCA dropdown."""
-    return {"ok": True, "cis": datasources.list_cis(limit)}
+    return {"ok": True, "cis": datasources.list_cis(limit, db_path=_db(dataset, sid))}
 
 
 @app.get("/api/itsm/breakdown")
-def itsm_breakdown(by: str = "category", top: int = 15) -> dict:
+def itsm_breakdown(by: str = "category", top: int = 15, dataset: str = "base", sid: str = "") -> dict:
     """Incident counts grouped by a chosen dimension (for Hotspots dropdowns)."""
-    return {"ok": True, **datasources.breakdown(by=by, top=top)}
+    return {"ok": True, **datasources.breakdown(by=by, top=top, db_path=_db(dataset, sid))}
 
 
 @app.get("/api/itsm/rca")
-def itsm_rca(id: str) -> dict:
+def itsm_rca(id: str, dataset: str = "base", sid: str = "") -> dict:
     """Root-cause analysis for an incident number (INC…) or a CI name."""
-    return diagnostics.rca(id)
+    return diagnostics.rca(id, db_path=_db(dataset, sid))
 
 
 @app.get("/api/itsm/change-impact")
-def itsm_change_impact(window_hours: int = 72, top: int = 15) -> dict:
-    return diagnostics.change_impact(window_hours=window_hours, top=top)
+def itsm_change_impact(window_hours: int = 72, top: int = 15,
+                       dataset: str = "base", sid: str = "") -> dict:
+    return diagnostics.change_impact(window_hours=window_hours, top=top, db_path=_db(dataset, sid))
 
 
 @app.post("/api/itsm/similar")
-def itsm_similar(req: SimilarRequest) -> dict:
-    return diagnostics.similar(req.text)
+def itsm_similar(req: SimilarRequest, dataset: str = "base", sid: str = "") -> dict:
+    return diagnostics.similar(req.text, db_path=_db(dataset, sid))
+
+
+@app.post("/api/itsm/upload")
+async def itsm_upload(sid: str, files: list[UploadFile]) -> dict:
+    """Build an isolated per-session dataset from the user's uploaded files.
+
+    Each file's type (Incident/Problem/Change/Task) is auto-detected from its
+    filename or columns. Accepts CSV/TSV/XLSX.
+    """
+    if not sid.strip():
+        return {"ok": False, "error": "Missing session id."}
+    payload = []
+    for f in files:
+        data = await f.read()
+        if len(data) > 80 * 1024 * 1024:  # 80 MB per file
+            return {"ok": False, "error": f"{f.filename} is too large (max 80 MB)."}
+        payload.append((f.filename or "unnamed", data))
+    if not payload:
+        return {"ok": False, "error": "No files were uploaded."}
+    try:
+        result = datasources.build_session_db(sid, payload)
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+    return {"ok": True, **result}
