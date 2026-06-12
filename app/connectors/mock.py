@@ -7,6 +7,7 @@ ServiceNow connector later by setting its env vars.
 from __future__ import annotations
 
 import csv
+import os
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
@@ -29,8 +30,11 @@ class MockConnector(ITSMConnector):
         token = DATASET_TOKEN.get(dataset)
         if not token:
             return None
-        # Prefer real local data/; fall back to the committed sample_data/.
-        for base in (DATA_DIR, SAMPLE_DIR):
+        # Demo mode (VE_USE_SAMPLE) forces the synthetic data; otherwise prefer
+        # real local data/ and fall back to the committed sample_data/.
+        sample_only = os.environ.get("VE_USE_SAMPLE", "").strip().lower() in ("1", "true", "yes")
+        bases = (SAMPLE_DIR,) if sample_only else (DATA_DIR, SAMPLE_DIR)
+        for base in bases:
             if not base.exists():
                 continue
             for p in base.glob("*.csv"):

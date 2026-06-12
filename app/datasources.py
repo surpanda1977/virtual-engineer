@@ -13,6 +13,7 @@ is newer than the DB. Everything stays local — data/ is git-ignored.
 from __future__ import annotations
 
 import csv
+import os
 import re
 import sqlite3
 from datetime import datetime
@@ -22,7 +23,19 @@ csv.field_size_limit(10_000_000)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
-DB_PATH = DATA_DIR / "itsm.db"
+
+
+def use_sample() -> bool:
+    """Demo mode: force the synthetic sample data (set VE_USE_SAMPLE=1).
+
+    Used for recordings/screenshots so the real internal data in data/ is never
+    shown. Demo mode uses a separate DB file so it never collides with the real one.
+    """
+    return os.environ.get("VE_USE_SAMPLE", "").strip().lower() in ("1", "true", "yes")
+
+
+def _db_file() -> Path:
+    return DATA_DIR / ("itsm_sample.db" if use_sample() else "itsm.db")
 
 # Filename token (whitespace-delimited) -> table name.
 SOURCES = {"INC": "incidents", "PRB": "problems", "CR": "changes", "TSK": "tasks"}
@@ -69,7 +82,8 @@ SAMPLE_DIR = BASE_DIR / "sample_data"  # committed synthetic demo data (fallback
 
 
 def _find_csv(token: str) -> Path | None:
-    for base in (DATA_DIR, SAMPLE_DIR):
+    bases = (SAMPLE_DIR,) if use_sample() else (DATA_DIR, SAMPLE_DIR)
+    for base in bases:
         if not base.exists():
             continue
         for p in base.glob("*.csv"):
@@ -81,9 +95,9 @@ def _find_csv(token: str) -> Path | None:
 # --- Building the database --------------------------------------------------
 
 def _needs_rebuild() -> bool:
-    if not DB_PATH.exists():
+    if not _db_file().exists():
         return True
-    db_mtime = DB_PATH.stat().st_mtime
+    db_mtime = _db_file().stat().st_mtime
     for token in SOURCES:
         p = _find_csv(token)
         if p and p.stat().st_mtime > db_mtime:
@@ -177,7 +191,7 @@ def build(force: bool = False) -> dict:
         return stats()
     connector = get_connector()
     counts: dict = {}
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(_db_file())
     try:
         conn.execute("PRAGMA journal_mode=WAL")
         for table in SOURCES.values():  # incidents, problems, changes, tasks
@@ -214,7 +228,7 @@ def get_connection(db_path: str | Path | None = None) -> sqlite3.Connection:
     per-session uploaded dataset)."""
     if db_path is None:
         ensure_loaded()
-        db_path = DB_PATH
+        db_path = _db_file()
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
@@ -240,7 +254,7 @@ def _count(conn: sqlite3.Connection, table: str, col: str, val) -> int:
 
 
 def stats(db_path: str | Path | None = None) -> dict:
-    path = Path(db_path) if db_path else DB_PATH
+    path = Path(db_path) if db_path else _db_file()
     if not path.exists():
         return {}
     conn = sqlite3.connect(path)
