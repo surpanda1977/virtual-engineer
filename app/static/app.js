@@ -133,16 +133,19 @@ function fmtNum(n) {
   return (n || 0).toLocaleString();
 }
 
+// Deloitte brand chart sequence (green first) — distinct color per category.
+const BAR_PALETTE = ["#86BC25", "#00A3E0", "#282728", "#63C631", "#A0DCFF", "#005587", "#B7E320", "#0076A8"];
+
 function barRows(obj, max) {
   const entries = Object.entries(obj || {});
   if (!entries.length) return "<p class='muted'>None detected.</p>";
   const top = Math.max(1, ...entries.map(([, v]) => v));
   return entries
     .map(
-      ([k, v]) => `
+      ([k, v], i) => `
       <div class="bar-row">
         <span class="bar-label">${escapeHtml(k)}</span>
-        <span class="bar-track"><span class="bar-fill" style="width:${(v / top) * 100}%"></span></span>
+        <span class="bar-track"><span class="bar-fill" style="width:${(v / top) * 100}%;background:${BAR_PALETTE[i % BAR_PALETTE.length]}"></span></span>
         <span class="bar-val">${v}</span>
       </div>`
     )
