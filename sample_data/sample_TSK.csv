@@ -1,0 +1,141 @@
+number,priority,state,short_description,assignment_group,cat_item,request_item,sys_created_on,closed_at
+SCTASK0070006,4 - Low,Open,Server Decommission,Service Desk,Password Reset,RITM0069906,2025-07-22 15:57:25,2025-07-26 12:47:36
+SCTASK0070010,4 - Low,Work in Progress,Server Decommission,Cloud Ops,Server Decommission,RITM0069910,2025-12-23 21:34:25,2025-12-27 08:42:49
+SCTASK0070012,4 - Low,Open,Password Reset,Cloud Ops,Mailbox Setup,RITM0069912,2025-07-20 12:56:24,2025-07-23 22:34:56
+SCTASK0070017,2 - High,Open,Software Install,Cloud Ops,New Laptop Request,RITM0069917,2025-10-21 01:29:38,2025-10-25 07:05:40
+SCTASK0070023,4 - Low,Closed Complete,Password Reset,Cloud Ops,VPN Account,RITM0069923,2025-11-20 16:59:48,2025-11-28 02:47:34
+SCTASK0070026,3 - Moderate,Work in Progress,VPN Account,Service Desk,Software Install,RITM0069926,2025-08-03 16:01:28,2025-08-06 09:46:07
+SCTASK0070027,4 - Low,Work in Progress,VPN Account,Service Desk,Server Decommission,RITM0069927,2025-09-13 18:31:24,2025-09-20 19:31:58
+SCTASK0070029,4 - Low,Open,VPN Account,Cloud Ops,VPN Account,RITM0069929,2025-11-16 16:09:17,2025-11-23 20:43:59
+SCTASK0070033,3 - Moderate,Work in Progress,Password Reset,Service Desk,Mailbox Setup,RITM0069933,2025-12-10 10:16:54,2025-12-18 01:06:48
+SCTASK0070037,3 - Moderate,Closed Complete,Server Decommission,Cloud Ops,Mailbox Setup,RITM0069937,2025-11-09 19:07:20,2025-11-15 14:55:58
+SCTASK0070043,4 - Low,Closed Complete,New Laptop Request,Deskside Support,VPN Account,RITM0069943,2025-12-08 06:26:19,2025-12-16 17:04:22
+SCTASK0070044,4 - Low,Closed Complete,Mailbox Setup,Deskside Support,Server Decommission,RITM0069944,2025-12-08 15:12:34,2025-12-09 23:41:16
+SCTASK0070048,2 - High,Open,Software Install,Deskside Support,VPN Account,RITM0069948,2025-10-03 10:49:42,2025-10-08 00:48:18
+SCTASK0070051,4 - Low,Work in Progress,Software Install,Deskside Support,Access Request,RITM0069951,2025-11-19 13:59:21,2025-11-26 02:25:35
+SCTASK0070052,4 - Low,Work in Progress,Password Reset,Cloud Ops,VPN Account,RITM0069952,2025-11-04 06:16:24,2025-11-06 01:48:30
+SCTASK0070057,2 - High,Closed Complete,Mailbox Setup,Service Desk,VPN Account,RITM0069957,2025-07-21 17:02:58,2025-07-26 10:22:42
+SCTASK0070061,3 - Moderate,Closed Complete,Server Decommission,Service Desk,VPN Account,RITM0069961,2025-07-05 13:24:50,2025-07-07 08:53:34
+SCTASK0070064,1 - Critical,Open,Server Decommission,Cloud Ops,New Laptop Request,RITM0069964,2025-11-04 14:01:22,2025-11-06 09:43:12
+SCTASK0070070,4 - Low,Open,Mailbox Setup,Cloud Ops,VPN Account,RITM0069970,2025-09-21 05:45:28,2025-09-28 18:45:45
+SCTASK0070075,4 - Low,Work in Progress,Mailbox Setup,Deskside Support,New Laptop Request,RITM0069975,2025-10-21 00:13:21,2025-10-28 22:10:00
+SCTASK0070078,2 - High,Open,Software Install,Service Desk,Software Install,RITM0069978,2025-10-12 11:38:20,2025-10-20 09:46:36
+SCTASK0070079,4 - Low,Closed Complete,Password Reset,Deskside Support,Access Request,RITM0069979,2025-09-15 18:48:10,2025-09-22 10:06:59
+SCTASK0070080,4 - Low,Open,Mailbox Setup,Deskside Support,New Laptop Request,RITM0069980,2025-12-12 10:23:45,2025-12-17 13:27:46
+SCTASK0070084,4 - Low,Closed Complete,VPN Account,Service Desk,Software Install,RITM0069984,2025-10-08 11:03:25,2025-10-14 18:15:04
+SCTASK0070088,3 - Moderate,Open,Mailbox Setup,Cloud Ops,New Laptop Request,RITM0069988,2025-09-22 00:49:09,2025-09-25 05:40:38
+SCTASK0070093,2 - High,Closed Complete,Password Reset,Service Desk,New Laptop Request,RITM0069993,2025-08-20 21:28:19,2025-08-23 13:23:50
+SCTASK0070094,4 - Low,Open,Password Reset,Service Desk,Server Decommission,RITM0069994,2025-10-28 13:11:31,2025-11-03 18:03:36
+SCTASK0070099,4 - Low,Open,New Laptop Request,Deskside Support,Software Install,RITM0069999,2025-08-24 14:45:18,2025-08-27 01:36:13
+SCTASK0070102,1 - Critical,Closed Complete,Mailbox Setup,Cloud Ops,Password Reset,RITM0070002,2025-10-20 19:54:22,2025-10-26 21:20:11
+SCTASK0070106,4 - Low,Open,New Laptop Request,Deskside Support,Access Request,RITM0070006,2025-11-15 03:04:42,2025-11-19 10:41:22
+SCTASK0070110,3 - Moderate,Closed Complete,New Laptop Request,Deskside Support,VPN Account,RITM0070010,2025-11-28 02:36:09,2025-11-30 07:39:52
+SCTASK0070116,4 - Low,Closed Complete,VPN Account,Cloud Ops,Software Install,RITM0070016,2025-12-05 06:31:10,2025-12-12 12:49:07
+SCTASK0070121,2 - High,Closed Complete,Server Decommission,Cloud Ops,New Laptop Request,RITM0070021,2025-07-11 15:32:48,2025-07-17 00:01:04
+SCTASK0070127,1 - Critical,Work in Progress,VPN Account,Cloud Ops,Password Reset,RITM0070027,2025-10-19 16:11:06,2025-10-23 12:32:47
+SCTASK0070132,2 - High,Work in Progress,Software Install,Cloud Ops,Mailbox Setup,RITM0070032,2025-10-14 06:01:36,2025-10-19 17:14:54
+SCTASK0070138,3 - Moderate,Open,Mailbox Setup,Service Desk,Server Decommission,RITM0070038,2025-10-24 15:07:07,2025-10-28 05:51:50
+SCTASK0070140,4 - Low,Work in Progress,Server Decommission,Service Desk,Server Decommission,RITM0070040,2025-07-01 06:56:36,2025-07-09 22:07:35
+SCTASK0070145,3 - Moderate,Open,Access Request,Deskside Support,Mailbox Setup,RITM0070045,2025-12-30 19:33:03,2026-01-08 01:39:22
+SCTASK0070147,4 - Low,Closed Complete,Access Request,Deskside Support,Password Reset,RITM0070047,2025-07-03 01:37:03,2025-07-04 16:16:12
+SCTASK0070150,4 - Low,Open,New Laptop Request,Cloud Ops,Access Request,RITM0070050,2025-10-01 17:22:51,2025-10-05 19:06:53
+SCTASK0070156,4 - Low,Open,Software Install,Deskside Support,Password Reset,RITM0070056,2025-10-13 02:42:12,2025-10-17 03:41:51
+SCTASK0070162,3 - Moderate,Open,Server Decommission,Service Desk,VPN Account,RITM0070062,2025-09-26 16:14:36,2025-09-29 01:48:25
+SCTASK0070166,3 - Moderate,Work in Progress,VPN Account,Deskside Support,Server Decommission,RITM0070066,2025-12-11 05:55:12,2025-12-12 18:01:15
+SCTASK0070171,1 - Critical,Closed Complete,Access Request,Cloud Ops,Mailbox Setup,RITM0070071,2025-08-24 18:43:03,2025-08-25 22:45:39
+SCTASK0070176,4 - Low,Open,Software Install,Deskside Support,Password Reset,RITM0070076,2025-11-03 10:41:11,2025-11-04 17:25:11
+SCTASK0070180,4 - Low,Closed Complete,Mailbox Setup,Deskside Support,Software Install,RITM0070080,2025-10-23 15:38:08,2025-10-30 00:11:49
+SCTASK0070183,4 - Low,Closed Complete,New Laptop Request,Deskside Support,VPN Account,RITM0070083,2025-11-07 01:31:44,2025-11-08 20:16:38
+SCTASK0070185,4 - Low,Open,Mailbox Setup,Deskside Support,Software Install,RITM0070085,2025-09-06 23:59:42,2025-09-09 00:14:13
+SCTASK0070186,4 - Low,Work in Progress,Mailbox Setup,Service Desk,Password Reset,RITM0070086,2025-11-20 08:03:19,2025-11-25 16:18:38
+SCTASK0070191,4 - Low,Work in Progress,Server Decommission,Cloud Ops,Access Request,RITM0070091,2025-07-29 04:42:34,2025-08-06 04:13:29
+SCTASK0070193,4 - Low,Closed Complete,Server Decommission,Service Desk,Software Install,RITM0070093,2025-11-18 19:33:44,2025-11-26 08:04:10
+SCTASK0070197,3 - Moderate,Open,New Laptop Request,Deskside Support,New Laptop Request,RITM0070097,2025-09-09 22:17:14,2025-09-17 02:41:26
+SCTASK0070202,4 - Low,Work in Progress,New Laptop Request,Service Desk,Mailbox Setup,RITM0070102,2025-12-07 13:16:31,2025-12-15 10:46:13
+SCTASK0070208,2 - High,Work in Progress,Server Decommission,Service Desk,Access Request,RITM0070108,2025-08-27 04:24:56,2025-08-29 23:44:08
+SCTASK0070211,4 - Low,Work in Progress,Server Decommission,Service Desk,Access Request,RITM0070111,2025-08-20 15:02:41,2025-08-22 23:17:52
+SCTASK0070214,2 - High,Closed Complete,Mailbox Setup,Service Desk,Software Install,RITM0070114,2025-07-21 22:42:36,2025-07-27 19:53:46
+SCTASK0070219,4 - Low,Closed Complete,Password Reset,Deskside Support,Mailbox Setup,RITM0070119,2025-08-28 06:47:08,2025-08-31 11:40:04
+SCTASK0070220,4 - Low,Closed Complete,VPN Account,Service Desk,Software Install,RITM0070120,2025-08-26 23:34:12,2025-08-28 05:49:57
+SCTASK0070226,3 - Moderate,Open,New Laptop Request,Deskside Support,VPN Account,RITM0070126,2025-07-10 05:36:10,2025-07-12 20:15:47
+SCTASK0070231,2 - High,Closed Complete,Server Decommission,Deskside Support,Mailbox Setup,RITM0070131,2025-12-11 02:29:01,2025-12-15 07:17:54
+SCTASK0070234,1 - Critical,Closed Complete,Password Reset,Cloud Ops,New Laptop Request,RITM0070134,2025-11-27 14:12:18,2025-12-07 08:31:13
+SCTASK0070238,4 - Low,Closed Complete,VPN Account,Service Desk,VPN Account,RITM0070138,2025-10-12 21:43:50,2025-10-16 16:46:30
+SCTASK0070244,3 - Moderate,Work in Progress,Software Install,Service Desk,Software Install,RITM0070144,2025-11-07 23:16:05,2025-11-16 17:15:54
+SCTASK0070249,4 - Low,Work in Progress,Software Install,Cloud Ops,Server Decommission,RITM0070149,2025-08-17 05:22:03,2025-08-21 04:43:06
+SCTASK0070252,4 - Low,Open,VPN Account,Service Desk,Access Request,RITM0070152,2025-09-21 22:49:09,2025-09-27 06:12:29
+SCTASK0070254,4 - Low,Closed Complete,Mailbox Setup,Service Desk,Mailbox Setup,RITM0070154,2025-08-21 15:40:27,2025-08-23 13:54:27
+SCTASK0070260,4 - Low,Closed Complete,Server Decommission,Service Desk,Password Reset,RITM0070160,2025-11-23 19:21:36,2025-11-27 12:37:03
+SCTASK0070264,3 - Moderate,Open,Mailbox Setup,Service Desk,Mailbox Setup,RITM0070164,2025-09-12 08:23:09,2025-09-14 18:44:03
+SCTASK0070268,4 - Low,Open,Password Reset,Cloud Ops,Mailbox Setup,RITM0070168,2025-09-09 05:43:18,2025-09-14 02:50:59
+SCTASK0070272,4 - Low,Closed Complete,Server Decommission,Service Desk,Software Install,RITM0070172,2025-10-12 19:11:29,2025-10-19 18:18:56
+SCTASK0070273,1 - Critical,Closed Complete,Password Reset,Deskside Support,New Laptop Request,RITM0070173,2025-11-13 07:18:00,2025-11-19 15:12:26
+SCTASK0070277,4 - Low,Work in Progress,Software Install,Deskside Support,VPN Account,RITM0070177,2025-08-29 13:03:38,2025-08-31 04:05:45
+SCTASK0070278,2 - High,Work in Progress,Access Request,Deskside Support,Server Decommission,RITM0070178,2025-11-03 10:45:14,2025-11-10 09:20:58
+SCTASK0070279,4 - Low,Closed Complete,Password Reset,Cloud Ops,Password Reset,RITM0070179,2025-08-09 19:45:03,2025-08-10 19:47:26
+SCTASK0070281,3 - Moderate,Closed Complete,Access Request,Deskside Support,Mailbox Setup,RITM0070181,2025-10-29 22:35:27,2025-11-05 03:25:27
+SCTASK0070283,4 - Low,Work in Progress,Mailbox Setup,Cloud Ops,Access Request,RITM0070183,2025-08-07 15:15:57,2025-08-16 21:39:44
+SCTASK0070287,4 - Low,Open,Mailbox Setup,Service Desk,Mailbox Setup,RITM0070187,2025-11-09 08:32:20,2025-11-19 05:36:22
+SCTASK0070291,4 - Low,Open,Access Request,Cloud Ops,New Laptop Request,RITM0070191,2025-12-03 02:49:14,2025-12-04 03:00:09
+SCTASK0070296,4 - Low,Open,Password Reset,Deskside Support,Password Reset,RITM0070196,2025-11-28 04:44:54,2025-11-29 11:29:03
+SCTASK0070300,3 - Moderate,Closed Complete,Access Request,Cloud Ops,VPN Account,RITM0070200,2025-11-06 12:09:30,2025-11-11 03:51:41
+SCTASK0070304,2 - High,Open,VPN Account,Service Desk,Software Install,RITM0070204,2025-10-08 18:09:42,2025-10-14 18:07:57
+SCTASK0070307,4 - Low,Work in Progress,Password Reset,Cloud Ops,Software Install,RITM0070207,2025-12-01 17:06:58,2025-12-03 22:07:12
+SCTASK0070308,4 - Low,Closed Complete,VPN Account,Cloud Ops,VPN Account,RITM0070208,2025-10-27 15:43:31,2025-11-06 10:19:12
+SCTASK0070310,2 - High,Work in Progress,Password Reset,Deskside Support,Password Reset,RITM0070210,2025-07-16 11:50:30,2025-07-23 18:02:46
+SCTASK0070314,3 - Moderate,Closed Complete,VPN Account,Cloud Ops,Password Reset,RITM0070214,2025-10-23 01:18:26,2025-10-28 02:31:01
+SCTASK0070317,3 - Moderate,Closed Complete,New Laptop Request,Cloud Ops,VPN Account,RITM0070217,2025-08-11 07:27:14,2025-08-19 22:21:49
+SCTASK0070319,4 - Low,Work in Progress,Mailbox Setup,Cloud Ops,Access Request,RITM0070219,2025-11-08 07:40:29,2025-11-09 14:54:09
+SCTASK0070320,1 - Critical,Work in Progress,New Laptop Request,Cloud Ops,VPN Account,RITM0070220,2025-10-12 23:18:46,2025-10-22 15:02:53
+SCTASK0070321,1 - Critical,Closed Complete,Password Reset,Deskside Support,VPN Account,RITM0070221,2025-07-27 00:02:53,2025-08-01 15:42:33
+SCTASK0070326,4 - Low,Open,VPN Account,Cloud Ops,Server Decommission,RITM0070226,2025-12-10 20:30:31,2025-12-17 19:52:33
+SCTASK0070332,2 - High,Closed Complete,Password Reset,Cloud Ops,Access Request,RITM0070232,2025-07-15 06:56:08,2025-07-21 19:21:08
+SCTASK0070335,4 - Low,Work in Progress,VPN Account,Cloud Ops,VPN Account,RITM0070235,2025-10-06 21:51:57,2025-10-13 01:50:33
+SCTASK0070338,4 - Low,Work in Progress,Software Install,Service Desk,Server Decommission,RITM0070238,2025-09-16 01:06:09,2025-09-25 08:26:29
+SCTASK0070344,2 - High,Work in Progress,New Laptop Request,Cloud Ops,VPN Account,RITM0070244,2025-08-25 15:28:44,2025-08-31 20:21:27
+SCTASK0070349,4 - Low,Closed Complete,Mailbox Setup,Service Desk,Access Request,RITM0070249,2025-07-10 10:42:52,2025-07-15 19:25:21
+SCTASK0070351,4 - Low,Work in Progress,Software Install,Cloud Ops,Access Request,RITM0070251,2025-10-01 12:34:41,2025-10-05 00:01:30
+SCTASK0070354,4 - Low,Closed Complete,Software Install,Cloud Ops,Server Decommission,RITM0070254,2025-07-03 14:22:46,2025-07-05 23:01:29
+SCTASK0070358,4 - Low,Work in Progress,Password Reset,Cloud Ops,Software Install,RITM0070258,2025-09-06 16:00:57,2025-09-12 00:45:29
+SCTASK0070363,4 - Low,Open,Software Install,Cloud Ops,Password Reset,RITM0070263,2025-12-05 17:58:02,2025-12-08 03:15:49
+SCTASK0070367,3 - Moderate,Work in Progress,Software Install,Cloud Ops,VPN Account,RITM0070267,2025-11-15 18:07:39,2025-11-23 06:56:36
+SCTASK0070369,1 - Critical,Work in Progress,New Laptop Request,Cloud Ops,Access Request,RITM0070269,2025-08-08 14:04:58,2025-08-16 09:16:02
+SCTASK0070370,3 - Moderate,Work in Progress,VPN Account,Deskside Support,VPN Account,RITM0070270,2025-07-10 14:40:54,2025-07-18 07:51:01
+SCTASK0070375,2 - High,Closed Complete,VPN Account,Deskside Support,Access Request,RITM0070275,2025-08-12 18:14:25,2025-08-15 01:35:34
+SCTASK0070379,3 - Moderate,Work in Progress,Server Decommission,Deskside Support,Mailbox Setup,RITM0070279,2025-07-03 04:06:08,2025-07-10 07:36:13
+SCTASK0070380,3 - Moderate,Closed Complete,Access Request,Deskside Support,Mailbox Setup,RITM0070280,2025-07-18 19:37:26,2025-07-28 01:55:16
+SCTASK0070383,4 - Low,Open,Access Request,Cloud Ops,Mailbox Setup,RITM0070283,2025-08-31 07:10:36,2025-09-04 19:39:57
+SCTASK0070389,1 - Critical,Closed Complete,Mailbox Setup,Service Desk,Mailbox Setup,RITM0070289,2025-11-15 02:00:26,2025-11-19 02:53:13
+SCTASK0070395,4 - Low,Closed Complete,New Laptop Request,Cloud Ops,New Laptop Request,RITM0070295,2025-12-29 18:11:58,2026-01-07 05:50:40
+SCTASK0070396,3 - Moderate,Open,Server Decommission,Deskside Support,Access Request,RITM0070296,2025-09-14 06:12:16,2025-09-17 05:35:54
+SCTASK0070399,4 - Low,Open,Mailbox Setup,Service Desk,New Laptop Request,RITM0070299,2025-08-16 02:19:39,2025-08-25 13:02:41
+SCTASK0070405,4 - Low,Closed Complete,Server Decommission,Service Desk,Server Decommission,RITM0070305,2025-12-11 14:18:10,2025-12-21 05:11:12
+SCTASK0070406,4 - Low,Work in Progress,Server Decommission,Cloud Ops,Mailbox Setup,RITM0070306,2025-12-04 17:29:17,2025-12-12 22:58:45
+SCTASK0070408,1 - Critical,Open,Access Request,Deskside Support,VPN Account,RITM0070308,2025-12-11 23:14:20,2025-12-18 21:54:08
+SCTASK0070409,4 - Low,Work in Progress,Server Decommission,Cloud Ops,Password Reset,RITM0070309,2025-10-25 21:31:26,2025-11-02 19:52:11
+SCTASK0070412,4 - Low,Work in Progress,Password Reset,Service Desk,VPN Account,RITM0070312,2025-07-30 15:21:17,2025-08-04 03:17:25
+SCTASK0070413,4 - Low,Open,VPN Account,Service Desk,VPN Account,RITM0070313,2025-08-17 06:11:02,2025-08-27 01:44:20
+SCTASK0070415,4 - Low,Closed Complete,VPN Account,Service Desk,Software Install,RITM0070315,2025-10-20 16:26:45,2025-10-26 13:13:20
+SCTASK0070419,2 - High,Open,VPN Account,Cloud Ops,Access Request,RITM0070319,2025-08-09 23:09:12,2025-08-11 21:27:48
+SCTASK0070420,1 - Critical,Work in Progress,Password Reset,Deskside Support,New Laptop Request,RITM0070320,2025-07-13 21:15:03,2025-07-22 22:53:51
+SCTASK0070422,4 - Low,Open,Server Decommission,Deskside Support,Access Request,RITM0070322,2025-10-28 11:23:04,2025-10-30 20:07:54
+SCTASK0070425,2 - High,Open,Mailbox Setup,Cloud Ops,Password Reset,RITM0070325,2025-12-13 13:04:48,2025-12-18 23:04:01
+SCTASK0070429,1 - Critical,Open,Mailbox Setup,Service Desk,New Laptop Request,RITM0070329,2025-09-12 21:59:05,2025-09-17 09:01:13
+SCTASK0070435,3 - Moderate,Open,Mailbox Setup,Cloud Ops,Access Request,RITM0070335,2025-11-27 16:33:12,2025-12-01 16:34:35
+SCTASK0070438,2 - High,Closed Complete,New Laptop Request,Deskside Support,Mailbox Setup,RITM0070338,2025-09-12 07:30:00,2025-09-20 23:49:19
+SCTASK0070441,3 - Moderate,Work in Progress,Server Decommission,Service Desk,Software Install,RITM0070341,2025-07-15 17:21:58,2025-07-21 17:07:58
+SCTASK0070445,4 - Low,Closed Complete,VPN Account,Service Desk,Server Decommission,RITM0070345,2025-10-29 21:56:38,2025-11-06 02:44:02
+SCTASK0070449,2 - High,Work in Progress,Server Decommission,Service Desk,Software Install,RITM0070349,2025-07-16 12:42:57,2025-07-17 20:25:36
+SCTASK0070450,2 - High,Open,VPN Account,Deskside Support,New Laptop Request,RITM0070350,2025-11-09 17:05:37,2025-11-17 20:19:31
+SCTASK0070456,3 - Moderate,Work in Progress,New Laptop Request,Service Desk,Access Request,RITM0070356,2025-08-26 07:33:14,2025-08-27 19:39:42
+SCTASK0070462,4 - Low,Open,Password Reset,Cloud Ops,Server Decommission,RITM0070362,2025-07-08 20:02:29,2025-07-14 13:02:06
+SCTASK0070468,3 - Moderate,Open,Server Decommission,Cloud Ops,Software Install,RITM0070368,2025-12-07 05:55:06,2025-12-16 13:40:43
+SCTASK0070469,3 - Moderate,Closed Complete,New Laptop Request,Deskside Support,Mailbox Setup,RITM0070369,2025-11-12 14:08:20,2025-11-14 00:01:56
+SCTASK0070475,4 - Low,Open,Server Decommission,Service Desk,Access Request,RITM0070375,2025-10-27 17:28:11,2025-11-05 02:44:58
+SCTASK0070476,4 - Low,Closed Complete,New Laptop Request,Service Desk,New Laptop Request,RITM0070376,2025-09-22 11:33:45,2025-09-27 22:56:44
+SCTASK0070481,4 - Low,Work in Progress,Access Request,Cloud Ops,Server Decommission,RITM0070381,2025-08-10 08:45:16,2025-08-14 23:35:18
+SCTASK0070482,2 - High,Closed Complete,Software Install,Deskside Support,Password Reset,RITM0070382,2025-12-26 13:56:51,2026-01-05 06:19:16
+SCTASK0070484,2 - High,Open,Access Request,Service Desk,New Laptop Request,RITM0070384,2025-11-17 20:29:19,2025-11-21 07:38:59
+SCTASK0070488,4 - Low,Closed Complete,Software Install,Deskside Support,Software Install,RITM0070388,2025-07-31 18:04:45,2025-08-10 02:01:30
+SCTASK0070489,2 - High,Closed Complete,VPN Account,Service Desk,New Laptop Request,RITM0070389,2025-07-25 09:45:53,2025-08-03 07:45:51
+SCTASK0070490,4 - Low,Open,Server Decommission,Cloud Ops,Mailbox Setup,RITM0070390,2025-07-02 03:53:14,2025-07-11 03:27:39

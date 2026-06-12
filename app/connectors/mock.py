@@ -14,22 +14,28 @@ from app.connectors.base import ITSMConnector
 
 csv.field_size_limit(10_000_000)
 
-DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+_ROOT = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = _ROOT / "data"            # real internal data (git-ignored, local only)
+SAMPLE_DIR = _ROOT / "sample_data"   # synthetic demo data (committed, safe to publish)
 
 # dataset -> filename token (whitespace-delimited piece of "Jul12025 INC.csv").
 DATASET_TOKEN = {"incidents": "INC", "problems": "PRB", "changes": "CR", "tasks": "TSK"}
 
 
 class MockConnector(ITSMConnector):
-    source_name = "mock (local CSV)"
+    source_name = "demo data"
 
     def _find_csv(self, dataset: str) -> Path | None:
         token = DATASET_TOKEN.get(dataset)
         if not token:
             return None
-        for p in DATA_DIR.glob("*.csv"):
-            if token in p.stem.replace("_", " ").split():
-                return p
+        # Prefer real local data/; fall back to the committed sample_data/.
+        for base in (DATA_DIR, SAMPLE_DIR):
+            if not base.exists():
+                continue
+            for p in base.glob("*.csv"):
+                if token in p.stem.replace("_", " ").split():
+                    return p
         return None
 
     def is_configured(self) -> bool:

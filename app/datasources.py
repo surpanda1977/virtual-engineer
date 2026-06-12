@@ -65,10 +65,16 @@ def _sanitize(col: str) -> str:
     return c or "col"
 
 
+SAMPLE_DIR = BASE_DIR / "sample_data"  # committed synthetic demo data (fallback)
+
+
 def _find_csv(token: str) -> Path | None:
-    for p in DATA_DIR.glob("*.csv"):
-        if token in p.stem.replace("_", " ").split():
-            return p
+    for base in (DATA_DIR, SAMPLE_DIR):
+        if not base.exists():
+            continue
+        for p in base.glob("*.csv"):
+            if token in p.stem.replace("_", " ").split():
+                return p
     return None
 
 
