@@ -9,47 +9,105 @@
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <div class="app">
-    <header class="header">
-      <div class="brand">
-        <span class="logo">⚙️</span>
-        <div>
-          <h1>Virtual <span class="accent-word">Engineer</span></h1>
-          <p class="tagline">AI pair-programming assistant</p>
-        </div>
-      </div>
-      <div class="header-right">
-        <span class="wordmark">Deloitte<span class="dot">.</span></span>
-        <span class="badge" id="mode-badge">{% if mode == "claude" %}🟢 Claude API{% else %}offline mock{% endif %}</span>
-        <a class="navlink" href="/diagnostics">🩺 Diagnostics</a>
-      </div>
+  <div class="diag">
+    <header class="header header-slim">
+      <span class="wordmark">Deloitte<span class="dot">.</span></span>
+      <span class="badge" id="mode-badge">{% if mode == "claude" %}🟢 Claude API{% else %}offline mock{% endif %}</span>
     </header>
 
-    <main class="chat" id="chat">
-      <div class="msg assistant">
-        <div class="bubble">
-          <p>👋 Hi! I'm your Virtual Engineer. Ask me to <strong>review</strong>,
-          <strong>explain</strong>, <strong>debug</strong>, or <strong>generate</strong> code.</p>
-          <p>📎 Or <strong>attach documents</strong> (PDF, Word, Excel, PowerPoint, CSV, images)
-          and I'll analyze them for <strong>issues, requests, and trends</strong>.</p>
+    <!-- Centered hero (Google-style) -->
+    <section class="hero">
+      <span class="hero-logo">⚙️</span>
+      <h1>Virtual <span class="accent-word">Engineer</span></h1>
+      <div class="hero-desc">
+        I'm your Engineer — I analyze <strong>incident, change, problem, and task</strong> data from
+        your environment to diagnose root causes, correlate changes, retrieve similar incidents,
+        and surface hotspots &amp; trends.
+      </div>
+    </section>
+
+    <!-- Live data overview -->
+    <div class="stat-cards" id="stat-cards"><div class="stat"><b>…</b><span>loading data</span></div></div>
+
+    <!-- Four capabilities, on this page -->
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="rca">🔍 Root Cause</button>
+      <button class="tab" data-tab="change">🔧 Change Impact</button>
+      <button class="tab" data-tab="similar">📚 Similar Incidents</button>
+      <button class="tab" data-tab="hotspots">📊 Hotspots &amp; Trends</button>
+    </nav>
+
+    <!-- RCA -->
+    <section class="panel active" id="panel-rca">
+      <p class="hint">Diagnose by <strong>incident number</strong>, or pick a <strong>configuration item</strong> from the list. The copilot correlates incidents, problems, and changes on that CI, then generates a root-cause analysis.</p>
+      <div class="option-grid">
+        <div class="option-card">
+          <span class="option-label">Option A · by incident</span>
+          <div class="controls">
+            <input id="rca-input" placeholder="Incident number, e.g. INC1028401" />
+            <button id="rca-go">Diagnose incident</button>
+          </div>
+        </div>
+        <div class="option-card">
+          <span class="option-label">Option B · by configuration item</span>
+          <div class="controls">
+            <select id="rca-ci"><option value="">Loading configuration items…</option></select>
+            <button id="rca-ci-go">Diagnose CI</button>
+          </div>
         </div>
       </div>
-    </main>
+      <div id="rca-out" class="output"></div>
+    </section>
 
-    <div class="suggestions" id="suggestions"></div>
-    <div class="attachments" id="attachments"></div>
+    <!-- Change impact -->
+    <section class="panel" id="panel-change">
+      <p class="hint">Detects changes that were followed by incidents on the <em>same</em> CI within a time window — a signal for change-induced incidents (correlation, not proof).</p>
+      <div class="controls">
+        <label>Window (hours): <input id="change-window" type="number" value="72" min="1" max="720" style="width:90px" /></label>
+        <button id="change-go">Analyze changes</button>
+      </div>
+      <div id="change-out" class="output"></div>
+    </section>
 
-    <form class="composer" id="composer">
-      <input type="file" id="file-input" multiple hidden
-             accept=".pdf,.docx,.xlsx,.pptx,.csv,.tsv,.txt,.md,.json,.log,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tif,.tiff" />
-      <button type="button" id="attach" class="icon-btn" title="Attach documents to analyze">📎</button>
-      <textarea id="input" rows="1" placeholder="Ask a question, or attach files to analyze… (Shift+Enter for newline)"></textarea>
-      <button type="submit" id="send">Send</button>
-    </form>
+    <!-- Similar -->
+    <section class="panel" id="panel-similar">
+      <p class="hint">Describe a new incident; the copilot retrieves the most similar past incidents and recommends a resolution path based on how they were solved.</p>
+      <div class="controls">
+        <textarea id="similar-input" rows="2" placeholder="Describe the issue, e.g. 'user cannot connect to VPN after password change'"></textarea>
+        <button id="similar-go">Find &amp; advise</button>
+      </div>
+      <div id="similar-out" class="output"></div>
+    </section>
 
-    <footer class="footer">v{{ version }} · running locally · powered by FastAPI</footer>
+    <!-- Hotspots -->
+    <section class="panel" id="panel-hotspots">
+      <p class="hint">Portfolio view: where incidents concentrate, recurring problem areas, and volume trends — with an AI executive summary. Use the menus to break incidents down by any dimension.</p>
+      <div class="controls">
+        <button id="hotspots-go">Load portfolio</button>
+        <label>Break down by:
+          <select id="hot-dim">
+            <option value="cmdb_ci">Configuration Item</option>
+            <option value="assignment_group">Assignment Group</option>
+            <option value="category" selected>Category</option>
+            <option value="subcategory">Subcategory</option>
+            <option value="priority">Priority</option>
+            <option value="incident_state">State</option>
+            <option value="contact_type">Contact Type</option>
+          </select>
+        </label>
+        <label>Top
+          <select id="hot-top">
+            <option>10</option><option selected>15</option><option>25</option>
+          </select>
+        </label>
+      </div>
+      <div id="hot-breakdown" class="output"></div>
+      <div id="hotspots-out" class="output"></div>
+    </section>
+
+    <footer class="footer">v{{ version }} · Virtual Engineer · diagnostics over local ITSM data · powered by FastAPI + Claude</footer>
   </div>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/diagnostics.js"></script>
 </body>
 </html>

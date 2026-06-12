@@ -213,8 +213,25 @@ a { color: var(--dl-blue-dark); }
 .dx-table tbody tr:nth-child(even) { background: #F7F8FA; }
 .note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; padding: 8px 11px; background: var(--panel-2); border-radius: 8px; border-left: 3px solid var(--dl-green); }
 
-/* --- Diagnostics page --- */
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 18px 0 18px; border-bottom: 1px solid var(--border); }
+/* --- Unified home: slim header + centered hero --- */
+.header-slim { padding: 14px 4px 12px; }
+
+.hero { text-align: center; padding: 46px 16px 26px; }
+.hero-logo {
+  font-size: 30px; width: 68px; height: 68px; display: grid; place-items: center; margin: 0 auto 16px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow);
+}
+.hero h1 { font-size: 2.6rem; font-weight: 700; margin: 0; color: var(--dl-dark); letter-spacing: -0.02em; }
+.hero h1 .accent-word { font-size: inherit; }
+.hero-desc {
+  max-width: 640px; margin: 18px auto 0; color: var(--text); font-size: 15px; line-height: 1.6;
+  background: var(--panel); border: 1px solid var(--border); border-left: 4px solid var(--dl-green);
+  border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow);
+}
+@media (max-width: 600px) { .hero h1 { font-size: 2rem; } .hero { padding: 30px 12px 18px; } }
+
+/* --- Diagnostics workspace --- */
+.tabs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 18px 0 18px; border-bottom: 1px solid var(--border); }
 .tab { background: none; border: none; color: var(--muted); padding: 11px 16px; cursor: pointer; font-size: 14px; border-bottom: 3px solid transparent; font-weight: 600; }
 .tab:hover { color: var(--dl-dark); }
 .tab.active { color: var(--dl-dark); border-bottom-color: var(--dl-green); }

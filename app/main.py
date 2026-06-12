@@ -14,7 +14,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import FastAPI, Request, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -104,12 +104,10 @@ class SimilarRequest(BaseModel):
     text: str
 
 
-@app.get("/diagnostics", response_class=HTMLResponse)
-def diagnostics_page(request: Request) -> HTMLResponse:
-    """Serve the incident-diagnostics UI."""
-    return templates.TemplateResponse(
-        request, "diagnostics.html", {"version": __version__, "mode": config.mode()}
-    )
+@app.get("/diagnostics")
+def diagnostics_page() -> RedirectResponse:
+    """Diagnostics now lives on the home page — keep the old link working."""
+    return RedirectResponse("/")
 
 
 @app.get("/api/itsm/stats")
