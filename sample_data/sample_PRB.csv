@@ -1,9 +1,0 @@
-number,short_description,state,resolution_code,assignment_group,cmdb_ci,related_incidents,sys_created_on,closed_at
-PRB0050005,Recurring: payment timeout at checkout,Closed,Fix Applied,Problem Management,Acme Payments API,10,2025-12-11 05:23:07,
-PRB0050006,Recurring: crm login failure,Closed,Workaround,Problem Management,Globex CRM,6,2025-09-14 17:04:02,
-PRB0050010,Recurring: vpn disconnects intermittently,Fix in Progress,Fix Applied,Problem Management,VPN Gateway,14,2025-10-13 21:02:53,
-PRB0050015,Recurring: email not syncing,Fix in Progress,Permanent Fix,Problem Management,Mailflow Online,9,2025-10-22 09:10:44,
-PRB0050019,Recurring: data not refreshed overnight,Closed,,Problem Management,Orion Data Warehouse,16,2025-10-17 09:13:06,
-PRB0050021,Recurring: payslip not visible,Fix in Progress,Workaround,Problem Management,Helios HR Portal,6,2025-09-09 08:48:06,
-PRB0050026,Recurring: file restore request,Fix in Progress,Permanent Fix,Problem Management,Nimbus File Storage,6,2025-11-04 23:10:43,
-PRB0050031,Recurring: mfa prompt not received,Fix in Progress,,Problem Management,Titan Auth Service,4,2025-10-19 20:18:54,

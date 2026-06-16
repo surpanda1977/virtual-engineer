@@ -2,6 +2,10 @@
 
 *What we built, and how we built it.*
 
+![Virtual Engineer — home screen (demo data)](app-preview.svg)
+
+*The unified workspace: centered hero, live data overview, and the four diagnostic capabilities — on the Deloitte brand. (Shown with synthetic demo data.)*
+
 ---
 
 ## In one line

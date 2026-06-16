@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" font-family="'Open Sans','Segoe UI',Roboto,sans-serif">
+  <!-- canvas -->
+  <rect width="1000" height="720" fill="#F4F5F7"/>
+  <!-- signature Deloitte green top bar -->
+  <rect width="1000" height="6" fill="#86BC25"/>
+
+  <!-- header -->
+  <text x="40" y="42" font-size="20" font-weight="700" fill="#282728">Deloitte<tspan fill="#86BC25">.</tspan></text>
+  <rect x="812" y="24" width="150" height="30" rx="15" fill="#EAF4D9" stroke="#B7E08A"/>
+  <circle cx="833" cy="39" r="5" fill="#2DBE60"/>
+  <text x="845" y="44" font-size="13" font-weight="700" fill="#5a7d1e">Claude API</text>
+
+  <!-- hero logo: bulldozer in a rounded box -->
+  <rect x="462" y="70" width="76" height="76" rx="18" fill="#fff" stroke="#E2E5E9"/>
+  <g transform="translate(479,87) scale(0.66)">
+    <rect x="9" y="27" width="6" height="23" rx="3" fill="#282728"/>
+    <rect x="13" y="33" width="14" height="4" rx="2" fill="#282728"/>
+    <rect x="22" y="25" width="27" height="16" rx="3" fill="#86BC25"/>
+    <path d="M34 25 v-7 q0 -2 2 -2 h5 q2 0 2 2 v7 z" fill="#86BC25"/>
+    <rect x="36" y="18" width="6" height="6" rx="1" fill="#ffffff"/>
+    <rect x="26" y="17" width="3" height="8" rx="1.5" fill="#282728"/>
+    <rect x="16" y="41" width="38" height="14" rx="7" fill="#282728"/>
+    <circle cx="25" cy="48" r="4.2" fill="#ffffff"/><circle cx="45" cy="48" r="4.2" fill="#ffffff"/>
+    <circle cx="25" cy="48" r="1.6" fill="#282728"/><circle cx="45" cy="48" r="1.6" fill="#282728"/>
+  </g>
+
+  <!-- title -->
+  <text x="500" y="192" text-anchor="middle" font-size="46" font-weight="700" fill="#282728">Virtual <tspan font-style="italic" fill="#6f9e1f">Engineer</tspan></text>
+
+  <!-- description box -->
+  <rect x="200" y="216" width="600" height="74" rx="12" fill="#fff" stroke="#E2E5E9"/>
+  <rect x="200" y="216" width="4" height="74" fill="#86BC25"/>
+  <text text-anchor="middle" font-size="14.5" fill="#33373d">
+    <tspan x="500" y="244">I'm your Engineer — I analyze incident, change, problem, and task data from your</tspan>
+    <tspan x="500" y="264">environment to diagnose root causes, correlate changes, retrieve similar</tspan>
+    <tspan x="500" y="284">incidents, and surface hotspots &amp; trends.</tspan>
+  </text>
+
+  <!-- data source toggle -->
+  <text x="356" y="326" text-anchor="end" font-size="13" font-weight="600" fill="#5b6470">Analyzing:</text>
+  <rect x="366" y="312" width="178" height="30" rx="9" fill="#fff" stroke="#E2E5E9"/>
+  <rect x="366" y="312" width="92" height="30" rx="9" fill="#86BC25"/>
+  <text x="412" y="332" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Demo data</text>
+  <text x="500" y="332" text-anchor="middle" font-size="13" font-weight="600" fill="#9aa1ac">My data</text>
+  <rect x="556" y="312" width="150" height="30" rx="9" fill="#fff" stroke="#E2E5E9"/>
+  <path d="M583 333 v-9 m-4 4 l4 -4 4 4" fill="none" stroke="#282728" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="640" y="332" text-anchor="middle" font-size="13" font-weight="600" fill="#282728">Upload my data</text>
+
+  <!-- stat cards -->
+  <g>
+    <!-- card template repeated -->
+    <g transform="translate(40,366)">
+      <rect width="216" height="84" rx="12" fill="#fff" stroke="#E2E5E9"/>
+      <rect y="81" width="216" height="3" rx="2" fill="#86BC25"/>
+      <text x="108" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#282728">434</text>
+      <text x="108" y="68" text-anchor="middle" font-size="12.5" fill="#5b6470">Incidents</text>
+    </g>
+    <g transform="translate(268,366)">
+      <rect width="216" height="84" rx="12" fill="#fff" stroke="#E2E5E9"/>
+      <rect y="81" width="216" height="3" rx="2" fill="#86BC25"/>
+      <text x="108" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#282728">61</text>
+      <text x="108" y="68" text-anchor="middle" font-size="12.5" fill="#5b6470">Changes</text>
+    </g>
+    <g transform="translate(496,366)">
+      <rect width="216" height="84" rx="12" fill="#fff" stroke="#E2E5E9"/>
+      <rect y="81" width="216" height="3" rx="2" fill="#86BC25"/>
+      <text x="108" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#282728">8</text>
+      <text x="108" y="68" text-anchor="middle" font-size="12.5" fill="#5b6470">Problems</text>
+    </g>
+    <g transform="translate(724,366)">
+      <rect width="216" height="84" rx="12" fill="#fff" stroke="#E2E5E9"/>
+      <rect y="81" width="216" height="3" rx="2" fill="#86BC25"/>
+      <text x="108" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#282728">140</text>
+      <text x="108" y="68" text-anchor="middle" font-size="12.5" fill="#5b6470">Tasks</text>
+    </g>
+  </g>
+
+  <!-- tabs -->
+  <line x1="40" y1="500" x2="960" y2="500" stroke="#E2E5E9"/>
+  <text x="150" y="492" text-anchor="middle" font-size="14" font-weight="700" fill="#282728">Root Cause</text>
+  <rect x="108" y="498" width="84" height="3" fill="#86BC25"/>
+  <text x="330" y="492" text-anchor="middle" font-size="14" font-weight="600" fill="#5b6470">Change Impact</text>
+  <text x="540" y="492" text-anchor="middle" font-size="14" font-weight="600" fill="#5b6470">Similar Incidents</text>
+  <text x="760" y="492" text-anchor="middle" font-size="14" font-weight="600" fill="#5b6470">Hotspots &amp; Trends</text>
+
+  <!-- option cards -->
+  <g transform="translate(40,524)">
+    <rect width="448" height="120" rx="12" fill="#fff" stroke="#E2E5E9"/>
+    <text x="18" y="30" font-size="11.5" font-weight="700" fill="#6f9e1f">OPTION A · BY INCIDENT</text>
+    <rect x="18" y="44" width="412" height="30" rx="9" fill="#fff" stroke="#E2E5E9"/>
+    <text x="30" y="64" font-size="13" fill="#9aa1ac">Incident number, e.g. INC4000012</text>
+    <rect x="18" y="82" width="412" height="28" rx="9" fill="#86BC25"/>
+    <text x="224" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Diagnose incident</text>
+  </g>
+  <g transform="translate(512,524)">
+    <rect width="448" height="120" rx="12" fill="#fff" stroke="#E2E5E9"/>
+    <text x="18" y="30" font-size="11.5" font-weight="700" fill="#6f9e1f">OPTION B · BY CONFIGURATION ITEM</text>
+    <rect x="18" y="44" width="412" height="30" rx="9" fill="#fff" stroke="#E2E5E9"/>
+    <text x="30" y="64" font-size="13" fill="#5b6470">Acme Payments API (53)</text>
+    <path d="M414 56 l6 6 6 -6" fill="none" stroke="#282728" stroke-width="2" stroke-linecap="round"/>
+    <rect x="18" y="82" width="412" height="28" rx="9" fill="#86BC25"/>
+    <text x="224" y="101" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Diagnose CI</text>
+  </g>
+</svg>

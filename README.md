@@ -5,11 +5,14 @@ AI-augmented experts. It correlates incidents, changes, and problems across the
 ITSM estate and uses **Claude** to generate root-cause analysis, change-impact
 assessment, similar-incident guidance, and portfolio hotspots — in seconds.
 
-Built with FastAPI + Claude, on the Deloitte brand. **Ships with synthetic demo
-data, so it runs out of the box** — no real data and no API key required (add a
-key for full Claude analysis; otherwise it runs an offline heuristic).
+Built with FastAPI + Claude, on the Deloitte brand. Runs with **no API key required**
+(offline heuristic) or with a key for full Claude analysis. The demo dataset is **not
+bundled** — use **Bring-your-own-data** to analyse your own files, or request the demo
+dataset from the maintainer.
 
 ![python](https://img.shields.io/badge/python-3.12-blue) ![ui: Deloitte](https://img.shields.io/badge/UI-Deloitte-86BC25)
+
+![Virtual Engineer — home screen](docs/app-preview.svg)
 
 ---
 
@@ -32,7 +35,7 @@ See [`docs/PROJECT_SUMMARY.md`](docs/PROJECT_SUMMARY.md) for the full write-up,
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
-Open **http://127.0.0.1:8000**. It loads the synthetic demo data in `sample_data/` automatically.
+Open **http://127.0.0.1:8000**. The demo dataset isn't bundled in the repo — click **Upload my data** to analyse your own Incident/Problem/Change/Task files (CSV/Excel), or ask the maintainer for the demo data (drop it into `sample_data/`).
 
 *(On the original Windows dev machine, `.\run.cmd` or `.\run.ps1` use the bundled
 portable Python — see [CLAUDE.md](CLAUDE.md).)*
@@ -49,15 +52,15 @@ python -m unittest discover -s tests -t .
 ---
 
 ## Deploy a hosted demo
-A public, always-on demo (serving only the synthetic data) deploys from this repo
-in minutes — see [`docs/DEPLOY.md`](docs/DEPLOY.md). Config files included:
-`render.yaml`, `Procfile`, `runtime.txt`.
+The app is deployment-ready (`render.yaml`, `Procfile`, `runtime.txt`) — see
+[`docs/DEPLOY.md`](docs/DEPLOY.md). Note: the demo dataset isn't committed, so add it
+(or wire up a data source) before hosting.
 
 ---
 
 ## Data & safety
-- **`sample_data/`** — synthetic, 100% fake demo data (committed). Regenerate with `python tools/make_sample_data.py`.
-- **`data/`** — real internal data, if present, is **git-ignored** and never published. The app uses it locally and falls back to `sample_data/` otherwise.
+- **`sample_data/`** — synthetic, fake demo data. **Not committed** to the public repo (git-ignored); available from the maintainer on request.
+- **`data/`** — real internal data, if present, is **git-ignored** and never published.
 - Secrets (`.env`) are git-ignored. Uploaded data is isolated per browser session.
 
 ---
